@@ -1,20 +1,62 @@
-# Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+# MyFatoorah - Library
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+MyFatoorah Payment Gateway PHP library. It is a PHP library to integrate MyFatoorah APIs with your website.
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+## Install
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+Via Composer
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+``` bash
+composer require myfatoorah/library
+```
+
+## Usage
+
+### Payment Operations
+
+``` php
+$mfObj = new PaymentMyfatoorahApiV2($apiKey, $countryMode, $isTest);
+$postFields = [
+    'NotificationOption' => 'Lnk',
+    'InvoiceValue'       => '50',
+    'CustomerName'       => 'fname lname',
+];
+
+$data = $mfObj->getInvoiceURL($postFields);
+
+$invoiceId   = $data->InvoiceId;
+$paymentLink = $data->InvoiceURL;
+
+echo "Click on <a href='$paymentLink' target='_blank'>$paymentLink</a> to pay with invoiceID $invoiceId.";
+
+```
+
+### Shipping Operations
+
+``` php
+$mfObj = new ShippingMyfatoorahApiV2($apiKey, $countryMode, $isTest);
+$json  = $mfObj->getShippingCountries();
+
+echo 'Country code: ' . $json->Data[0]->CountryCode;
+echo 'Country name: ' . $json->Data[0]->CountryName;
+```
+
+### General Operations
+
+``` php
+$phone = MyfatoorahApiV2::getPhone('+2 01234567890');
+
+echo 'Phone code: ' . $phone[0];
+echo 'Phone number: ' . $phone[1];
+
+```
+
+## Testing
+
+``` bash
+phpunit
+```
+
+## License
+
+The GPL-3.0-only License.

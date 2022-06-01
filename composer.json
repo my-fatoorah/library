@@ -1,0 +1,54 @@
+{
+    "name": "myfatoorah/library",
+    "description": "MyFatoorah PHP Library",
+    "version": "2.0.0",
+    "type": "library",
+    "require": {
+        "php": ">=7",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9"
+    },
+
+    "keywords": [
+        "MyFatoorah",
+        "My Fatoorah",
+        "Fatoorah",
+        "gateway",
+        "payment",
+        "Shipping",
+        "api"
+    ],
+    "homepage": "https://myfatoorah.com/",
+    "authors": [
+        {
+            "name": "MyFatoorah Plugin Team"
+        },
+        {
+            "name": "Nermeen Shoman",
+            "email": "nshoman@myfatoorah.com",
+            "role": "Senior Engineer"
+        },
+        {
+            "name": "Rasha Saeed",
+            "email": "rsaeed@myfatoorah.com",
+            "role": "Senior Engineer"
+        }
+    ],
+    "license": [
+        "GPL-3.0-only"
+    ],
+    "autoload": {
+        "files": ["autoload.php"],
+        "psr-4": {
+            "MyFatoorah\\Library\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MyFatoorah\\Test\\": "tests"
+        }
+    }
+}

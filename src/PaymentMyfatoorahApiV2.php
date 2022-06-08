@@ -286,7 +286,7 @@ class PaymentMyfatoorahApiV2 extends MyfatoorahApiV2 {
      * 
      * @return array
      */
-    public function getInvoiceURL($curlData, $gatewayId = 'myfatoorah', $orderId = null, $sessionId = null) {
+    public function getInvoiceURL($curlData, $gatewayId = 0, $orderId = null, $sessionId = null) {
 
         $this->log('----------------------------------------------------------------------------------------------------------------------------------');
 
@@ -294,7 +294,7 @@ class PaymentMyfatoorahApiV2 extends MyfatoorahApiV2 {
 
         if (!empty($sessionId)) {
             return $this->embeddedPayment($curlData, $sessionId, $orderId);
-        } else if ($gatewayId == 'myfatoorah') {
+        } else if ($gatewayId == 'myfatoorah' || empty($gatewayId)) {
             return $this->sendPayment($curlData, $orderId);
         } else {
             return $this->excutePayment($curlData, $gatewayId, $orderId);

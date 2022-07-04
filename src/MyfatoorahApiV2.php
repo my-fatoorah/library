@@ -183,7 +183,7 @@ class MyfatoorahApiV2 {
         }
 
         if (!$json) {
-            return (!empty($res) ? $res : 'Kindly, review your MyFatoorah admin configuration due to a wrong entry.');
+            return (!empty($res) ? $res : 'Kindly review your MyFatoorah admin configuration due to a wrong entry.');
         }
 
         if (is_string($json)) {
@@ -375,7 +375,7 @@ class MyfatoorahApiV2 {
     //-----------------------------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Get the rate that will convert the given currency to the default currency of MyFatoorah portal account.
+     * Gets the rate of a given currency according to the default currency of the MyFatoorah portal account.
      * 
      * @param string $currency The currency that will be converted into the currency of MyFatoorah portal account.
      * 

@@ -202,7 +202,7 @@ class PaymentMyfatoorahApiV2 extends MyfatoorahApiV2 {
      */
     protected function isAppleSystem() {
 
-        $userAgent = $_SERVER['HTTP_USER_AGENT'];
+        $userAgent = filter_input(INPUT_SERVER, 'HTTP_USER_AGENT', FILTER_SANITIZE_STRING);
 
         if ((stripos($userAgent, 'iPod') || stripos($userAgent, 'iPhone') || stripos($userAgent, 'iPad') || stripos($userAgent, 'Mac')) && (self::getBrowserName($userAgent) == 'Safari')) {
             return true;
@@ -268,7 +268,7 @@ class PaymentMyfatoorahApiV2 extends MyfatoorahApiV2 {
         }
 
         if ($this->isDirectPayment && !$pm->IsDirectPayment) {
-            throw new Exception($pm->PaymentMethodEn . ' Direct Payment Method is not activated. Kindly, contact your MyFatoorah account manager or sales representative to activate it.');
+            throw new Exception($pm->PaymentMethodEn . ' Direct Payment Method is not activated. Kindly contact your MyFatoorah account manager or sales representative to activate it.');
         }
 
         return $pm;
@@ -286,7 +286,7 @@ class PaymentMyfatoorahApiV2 extends MyfatoorahApiV2 {
      * 
      * @return array
      */
-    public function getInvoiceURL($curlData, $gatewayId = 'myfatoorah', $orderId = null, $sessionId = null) {
+    public function getInvoiceURL($curlData, $gatewayId = 0, $orderId = null, $sessionId = null) {
 
         $this->log('----------------------------------------------------------------------------------------------------------------------------------');
 
@@ -294,7 +294,7 @@ class PaymentMyfatoorahApiV2 extends MyfatoorahApiV2 {
 
         if (!empty($sessionId)) {
             return $this->embeddedPayment($curlData, $sessionId, $orderId);
-        } else if ($gatewayId == 'myfatoorah') {
+        } else if ($gatewayId == 'myfatoorah' || empty($gatewayId)) {
             return $this->sendPayment($curlData, $orderId);
         } else {
             return $this->excutePayment($curlData, $gatewayId, $orderId);

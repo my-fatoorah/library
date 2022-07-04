@@ -44,7 +44,7 @@ if (!file_exists($mfLibFile) || (time() - filemtime($mfLibFile) > 86400)) {
         file_put_contents($mfLibFolder . '/MyfatoorahApiV2.php', $mfNamespace . $mfUse2 . $mfClass . $mfSplitFile[1]);
         file_put_contents($mfLibFolder . '/PaymentMyfatoorahApiV2.php', $mfNamespace . $mfUse1 . $mfUse2 . $mfClass . $mfSplitFile[2]);
         file_put_contents($mfLibFolder . '/ShippingMyfatoorahApiV2.php', $mfNamespace . $mfUse1 . $mfClass . $mfSplitFile[3]);
-    }else if ($mfHttpCode == 403) {
+    } else if ($mfHttpCode == 403) {
         touch($mfLibFile);
     }
 }

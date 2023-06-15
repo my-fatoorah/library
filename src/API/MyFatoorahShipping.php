@@ -1,68 +1,68 @@
 <?php
 
-namespace MyFatoorah\Library;
+namespace MyFatoorah\Library\API;
 
-use MyFatoorah\Library\MyfatoorahApiV2;
+use MyFatoorah\Library\MyFatoorah;
 
 /**
- * This class handles the shipping process of MyFatoorah API endpoints
- * 
+ * MyFatoorahShipping handles the shipping process of MyFatoorah API endpoints
+ *
  * @author    MyFatoorah <tech@myfatoorah.com>
  * @copyright 2021 MyFatoorah, All rights reserved
  * @license   GNU General Public License v3.0
  */
-class ShippingMyfatoorahApiV2 extends MyfatoorahApiV2 {
+class MyFatoorahShipping extends MyFatoorah
+{
     //-----------------------------------------------------------------------------------------------------------------------------------------
 
     /**
      * Get MyFatoorah Shipping Countries (GET API)
-     * 
-     * @return object
+     *
+     * @return array
      */
-    public function getShippingCountries() {
-
+    public function getShippingCountries()
+    {
         $url  = "$this->apiURL/v2/GetCountries";
         $json = $this->callAPI($url, null, null, 'Get Countries');
-        return $json;
+        return $json->Data;
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
 
     /**
      * Get Shipping Cities (GET API)
-     * 
-     * @param integer $method      [1 for DHL, 2 for Aramex]
-     * @param string  $countryCode It can be obtained from getShippingCountries
-     * @param string  $searchValue The key word that will be used in searching
-     * 
-     * @return object
+     *
+     * @param int    $method      [1 for DHL, 2 for Aramex]
+     * @param string $countryCode It can be obtained from getShippingCountries
+     * @param string $searchValue The key word that will be used in searching
+     *
+     * @return array
      */
-    public function getShippingCities($method, $countryCode, $searchValue = '') {
-
+    public function getShippingCities($method, $countryCode, $searchValue = '')
+    {
         $url = $this->apiURL . '/v2/GetCities'
                 . '?shippingMethod=' . $method
                 . '&countryCode=' . $countryCode
                 . '&searchValue=' . urlencode(substr($searchValue, 0, 30));
 
         $json = $this->callAPI($url, null, null, "Get Cities: $countryCode");
-        //        return array_map('strtolower', $json->Data->CityNames);
-        return $json;
+        return array_map('ucwords', $json->Data->CityNames);
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
 
     /**
      * Calculate Shipping Charge (POST API)
-     * 
+     *
      * @param array $curlData the curl data contains the shipping information
-     * 
+     *
      * @return object
      */
-    public function calculateShippingCharge($curlData) {
-
+    public function calculateShippingCharge($curlData)
+    {
         $url  = "$this->apiURL/v2/CalculateShippingCharge";
         $json = $this->callAPI($url, $curlData, null, 'Calculate Shipping Charge');
-        return $json;
+        return $json->Data;
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------

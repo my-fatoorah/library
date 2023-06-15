@@ -2,124 +2,109 @@
 
 namespace MyFatoorah\Test;
 
-use MyFatoorah\Library\MyfatoorahApiV2;
+use MyFatoorah\Library\MyFatoorah;
 
-class MyfatoorahApiV2Test extends \PHPUnit\Framework\TestCase {
-
-    private $keys;
-
-//-----------------------------------------------------------------------------------------------------------------------------------------
-    public function __construct() {
-        parent::__construct();
-        $this->keys = include ('apiKeys.php');
-    }
-
-//-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testGetPhone() {
-        $expected = MyfatoorahApiV2::getPhone('');
+class MyFatoorahHelperTest extends \PHPUnit\Framework\TestCase
+{
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    public function testGetPhone()
+    {
+        $expected = MyFatoorah::getPhone('');
         $this->assertEquals('', $expected[0]);
         $this->assertEquals('', $expected[1]);
 
-        $expected1 = MyfatoorahApiV2::getPhone('+2 01234567890');
+        $expected1 = MyFatoorah::getPhone('+2 01234567890');
         $this->assertEquals('201', $expected1[0]);
         $this->assertEquals('234567890', $expected1[1]);
 
-        $expected2 = MyfatoorahApiV2::getPhone('+201234567890');
+        $expected2 = MyFatoorah::getPhone('+201234567890');
         $this->assertEquals('201', $expected2[0]);
         $this->assertEquals('234567890', $expected2[1]);
 
-        $expected3 = MyfatoorahApiV2::getPhone('00201234567890');
+        $expected3 = MyFatoorah::getPhone('00201234567890');
         $this->assertEquals('201', $expected3[0]);
         $this->assertEquals('234567890', $expected3[1]);
 
-        $expected4 = MyfatoorahApiV2::getPhone('002031234567');
+        $expected4 = MyFatoorah::getPhone('002031234567');
         $this->assertEquals('203', $expected4[0]);
         $this->assertEquals('1234567', $expected4[1]);
 
-        $expected5 = MyfatoorahApiV2::getPhone('٠٠٢٠١٢٣٤٥٦٧٨٩٠');
+        $expected5 = MyFatoorah::getPhone('٠٠٢٠١٢٣٤٥٦٧٨٩٠');
         $this->assertEquals('201', $expected5[0]);
         $this->assertEquals('234567890', $expected5[1]);
     }
 
-    public function testGetPhoneException1() {
+    public function testGetPhoneException1()
+    {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Phone Number lenght must be between 3 to 14 digits');
-        MyfatoorahApiV2::getPhone('12');
+        MyFatoorah::getPhone('12');
     }
 
-    public function testGetPhoneException2() {
+    public function testGetPhoneException2()
+    {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Phone Number lenght must be between 3 to 14 digits');
-        MyfatoorahApiV2::getPhone('12345678910123456');
+        MyFatoorah::getPhone('12345678910123456');
     }
 
-//-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testGetWeightRate() {
-        $expected1 = MyfatoorahApiV2::getWeightRate('KG');
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    public function testGetWeightRate()
+    {
+        $expected1 = MyFatoorah::getWeightRate('KG');
         $this->assertEquals(1, $expected1);
 
-        $expected2 = MyfatoorahApiV2::getWeightRate('kg');
+        $expected2 = MyFatoorah::getWeightRate('kg');
         $this->assertEquals(1, $expected2);
 
-        $expected3 = MyfatoorahApiV2::getWeightRate('oZ');
+        $expected3 = MyFatoorah::getWeightRate('oZ');
         $this->assertEquals(0.0283495, $expected3);
     }
 
-    public function testGetWeightRateException1() {
+    public function testGetWeightRateException1()
+    {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Weight units must be in kg, g, lbs, or oz. Default is kg');
-        MyfatoorahApiV2::getWeightRate('');
+        MyFatoorah::getWeightRate('');
     }
 
-    public function testGetWeightRateException2() {
+    public function testGetWeightRateException2()
+    {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Weight units must be in kg, g, lbs, or oz. Default is kg');
-        MyfatoorahApiV2::getWeightRate('sss');
+        MyFatoorah::getWeightRate('sss');
     }
 
-//-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testGetDimensionRate() {
-        $expected = MyfatoorahApiV2::getDimensionRate('CM');
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    public function testGetDimensionRate()
+    {
+        $expected = MyFatoorah::getDimensionRate('CM');
         $this->assertEquals(1, $expected);
 
-        $expected2 = MyfatoorahApiV2::getDimensionRate('cm');
+        $expected2 = MyFatoorah::getDimensionRate('cm');
         $this->assertEquals(1, $expected2);
 
-        $expected3 = MyfatoorahApiV2::getDimensionRate('mM');
+        $expected3 = MyFatoorah::getDimensionRate('mM');
         $this->assertEquals(0.1, $expected3);
     }
 
-    public function testGetDimensionRateException1() {
+    public function testGetDimensionRateException1()
+    {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Dimension units must be in cm, m, mm, in, or yd. Default is cm');
-        MyfatoorahApiV2::getDimensionRate('');
+        MyFatoorah::getDimensionRate('');
     }
 
-    public function testGetDimensionRateException2() {
+    public function testGetDimensionRateException2()
+    {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Dimension units must be in cm, m, mm, in, or yd. Default is cm');
-        MyfatoorahApiV2::getDimensionRate('sss');
+        MyFatoorah::getDimensionRate('sss');
     }
 
-//-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testGetCurrencyRates() {
-
-        foreach ($this->keys as $token) {
-            try {
-                $mfObj = new MyfatoorahApiV2($token['apiKey'], $token['countryMode'], $token['isTest']);
-                $json  = $mfObj->getCurrencyRates();
-
-                $this->assertEquals('1.00000000', $json[0]->Value);
-                $this->assertEquals('KWD', $json[0]->Text, $token['message']);
-            } catch (\Exception $ex) {
-                $exception = $token['getCurrencyRatesException'] ?? $token['exception'];
-                $this->assertEquals($exception, $ex->getMessage(), $token['message']);
-            }
-        }
-    }
-
-//-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testIsSignatureValid() {
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    public function testIsSignatureValid()
+    {
         $MyFatoorah_Signature1 = 'uRBOogk9ek7Hgsxs/Rt7Nvbu7Vxf+4eI5gwvbtg0NCw=';
         $MyFatoorah_Signature2 = '0YPWuCj1yxScY1gWMUCtilqTL76AAPna8EqedMikhuI=';
         $MyFatoorah_Signature3 = 'XdNvAIV8ZN6CmB2zzapnSemO6lDUpwKk2g/a11GxI8U=';
@@ -140,13 +125,13 @@ class MyfatoorahApiV2Test extends \PHPUnit\Framework\TestCase {
         $data3 = json_decode($body3, true);
         $data4 = json_decode($body4, true);
 
-        $this->assertTrue(MyfatoorahApiV2::isSignatureValid($data1['Data'], $secret1, $MyFatoorah_Signature1));
-        $this->assertTrue(MyfatoorahApiV2::isSignatureValid($data2['Data'], $secret2, $MyFatoorah_Signature2));
-        $this->assertTrue(MyfatoorahApiV2::isSignatureValid($data3['Data'], $secret3, $MyFatoorah_Signature3));
-        $this->assertTrue(MyfatoorahApiV2::isSignatureValid($data4['Data'], $secret4, $MyFatoorah_Signature4));
+        $this->assertTrue(MyFatoorah::isSignatureValid($data1['Data'], $secret1, $MyFatoorah_Signature1));
+        $this->assertTrue(MyFatoorah::isSignatureValid($data2['Data'], $secret2, $MyFatoorah_Signature2));
+        $this->assertTrue(MyFatoorah::isSignatureValid($data3['Data'], $secret3, $MyFatoorah_Signature3));
+        $this->assertTrue(MyFatoorah::isSignatureValid($data4['Data'], $secret4, $MyFatoorah_Signature4));
 
-        $this->assertFalse(MyfatoorahApiV2::isSignatureValid($data3['Data'], $secret4, $MyFatoorah_Signature4));
+        $this->assertFalse(MyFatoorah::isSignatureValid($data3['Data'], $secret4, $MyFatoorah_Signature4));
     }
 
-//-----------------------------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------------------
 }

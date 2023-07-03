@@ -43,7 +43,7 @@ class MyFatoorahPaymentEmbedded extends MyFatoorahPayment
         $mfListObj = new MyFatoorahList($this->config);
         $allRates  = $mfListObj->getCurrencyRates();
 
-        self::$checkoutGateways = ['all' => [], 'cards' => [], 'form' => [], 'ap' => []];
+        self::$checkoutGateways = ['all' => [], 'cards' => [], 'form' => [], 'ap' => [], 'gp' => []];
         foreach ($gateways as $gateway) {
             $gateway->GatewayData   = $this->calcGatewayData($gateway->TotalAmount, $gateway->CurrencyIso, $gateway->PaymentCurrencyIso, $allRates);
             self::$checkoutGateways = $this->addGatewayToCheckoutGateways($gateway, self::$checkoutGateways, $isAppleRegistered);
@@ -53,6 +53,7 @@ class MyFatoorahPaymentEmbedded extends MyFatoorahPayment
             //add only one ap gateway
             self::$checkoutGateways['ap'] = $this->getOneApplePayGateway(self::$checkoutGateways['ap'], $displayCurrencyIso, $allRates);
         }
+        
         return self::$checkoutGateways;
     }
 

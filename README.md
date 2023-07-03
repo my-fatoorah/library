@@ -1,12 +1,11 @@
-# MyFatoorah - Library
-
-[![Latest Stable Version](http://poser.pugx.org/myfatoorah/library/v)](https://dev.azure.com/myfatoorahsc/Public-Repo/_git/Library/releases)
+[![Latest Stable Version](https://poser.pugx.org/myfatoorah/library/v)](https://dev.azure.com/myfatoorahsc/Public-Repo/_git/Library/releases)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Build Status](https://scrutinizer-ci.com/g/my-fatoorah/library/badges/build.png?b=main)](https://scrutinizer-ci.com/g/my-fatoorah/library/build-status/main)
 [![Code Intelligence Status](https://scrutinizer-ci.com/g/my-fatoorah/library/badges/code-intelligence.svg?b=main)](https://scrutinizer-ci.com/code-intelligence)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/my-fatoorah/library/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/my-fatoorah/library/?branch=main)
 [![Total Downloads](https://poser.pugx.org/myfatoorah/library/downloads)](https://packagist.org/packages/myfatoorah/library)
 
-
+# MyFatoorah - Library
 MyFatoorah Payment Gateway PHP library. It is a PHP library to integrate MyFatoorah APIs with your website.
 
 ## Install

@@ -1,7 +1,7 @@
 {
     "name": "myfatoorah/library",
     "description": "MyFatoorah PHP Library",
-    "version": "2.2.3",
+    "version": "2.2.4",
     "type": "library",
     "license": [
         "GPL-3.0-only"

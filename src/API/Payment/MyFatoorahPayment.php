@@ -82,13 +82,15 @@ class MyFatoorahPayment extends MyFatoorah
 
         $gateways = $this->getCachedVendorGateways();
 
-        $cachedCheckoutGateways = ['all' => [], 'cards' => [], 'form' => [], 'ap' => []];
+        $cachedCheckoutGateways = ['all' => [], 'cards' => [], 'form' => [], 'ap' => [], 'gp' => []];
         foreach ($gateways as $gateway) {
             $cachedCheckoutGateways = $this->addGatewayToCheckoutGateways($gateway, $cachedCheckoutGateways, $isAppleRegistered);
         }
 
-        //add only one ap gateway
-        $cachedCheckoutGateways['ap'] = $cachedCheckoutGateways['ap'][0] ?? [];
+        if ($isAppleRegistered) {
+            //add only one ap gateway
+            $cachedCheckoutGateways['ap'] = $cachedCheckoutGateways['ap'][0] ?? [];
+        }
 
         return $cachedCheckoutGateways;
     }
@@ -107,7 +109,10 @@ class MyFatoorahPayment extends MyFatoorah
     protected function addGatewayToCheckoutGateways($gateway, $checkoutGateways, $isAppleRegistered)
     {
 
-        if ($gateway->PaymentMethodCode == 'ap') {
+        if ($gateway->PaymentMethodCode == 'gp') {
+            $checkoutGateways['gp']    = $gateway;
+            $checkoutGateways['all'][] = $gateway;
+        } elseif ($gateway->PaymentMethodCode == 'ap') {
             if ($isAppleRegistered) {
                 $checkoutGateways['ap'][] = $gateway;
             } else {

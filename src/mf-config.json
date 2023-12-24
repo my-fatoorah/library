@@ -30,9 +30,9 @@
       "countryNameEn":"United Arab Emirates"
    },
    "QAT":{
-      "portal":"https://portal.myfatoorah.com",
+      "portal":"https://qa.myfatoorah.com",
       "v1":"https://apiqa.myfatoorah.com",
-      "v2":"https://api.myfatoorah.com",
+      "v2":"https://api-qa.myfatoorah.com",
       "testPortal":"https://demo.myfatoorah.com",
       "testv1":"https://apidemo.myfatoorah.com",
       "testv2":"https://apitest.myfatoorah.com",

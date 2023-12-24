@@ -4,9 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ------------------------------
+## [2.2.5] - 2023-12-05
+### Changed
+- Some changes to the library to be compatible with other API rather than plugins
+
+------------------------------
 ## [2.2.4] - 2023-06-26
 ### Changed
-- Add google pay embedded gateway
+- Add google pay gateway
 
 ------------------------------
 ## [2.2.3] - 2023-05-24
@@ -63,6 +68,7 @@ Fix many requests in the MyFatoorah autoloader
 The first version of the library
 
 ------------------------------
+[2.2.5]: https://dev.azure.com/myfatoorahsc/Public-Repo/_git/Library?version=GT2.2.5
 [2.2.4]: https://dev.azure.com/myfatoorahsc/Public-Repo/_git/Library?version=GT2.2.4
 [2.2.3]: https://dev.azure.com/myfatoorahsc/Public-Repo/_git/Library?version=GT2.2.3
 [2.2.2]: https://dev.azure.com/myfatoorahsc/Public-Repo/_git/Library?version=GT2.2.2

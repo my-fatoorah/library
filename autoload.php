@@ -8,7 +8,7 @@
  *
  * Created by MyFatoorah http://www.myfatoorah.com/
  * Developed By tech@myfatoorah.com
- * Date: 02/05/2023
+ * Date: 05/12/2023
  * Time: 12:00
  *
  * API Documentation on https://myfatoorah.readme.io/docs
@@ -34,9 +34,11 @@ if (!is_writable($mfLibFile) || ((time() - filemtime($mfLibFile)) < 86400)) {
 touch($mfLibFile);
 try {
     $mfCurl = curl_init("https://portal.myfatoorah.com/Files/API/php/library/$mfVersion/MyfatoorahLibrary.txt");
-    curl_setopt_array($mfCurl, array(
-        CURLOPT_RETURNTRANSFER => true,
-    ));
+    curl_setopt_array(
+        $mfCurl, array(
+        CURLOPT_RETURNTRANSFER => true,            
+        )
+    );
 
     $mfResponse = curl_exec($mfCurl);
     $mfHttpCode = curl_getinfo($mfCurl, CURLINFO_HTTP_CODE);
@@ -71,7 +73,7 @@ function mfPutFileContent($mfLibFolder, $mfResponse)
 
     //namespace MyFatoorah\Library\API
     $mfLibFolder .= 'API/';
-    
+
     $mfApiNamespace = '<?php namespace MyFatoorah\Library\API; ';
     file_put_contents($mfLibFolder . 'MyFatoorahList.php', $mfApiNamespace . $useMfClass . $useExClass . $mfClass . $mfSplitFile[3]);
     file_put_contents($mfLibFolder . 'MyFatoorahRefund.php', $mfApiNamespace . $useMfClass . $mfClass . $mfSplitFile[4]);
@@ -80,7 +82,7 @@ function mfPutFileContent($mfLibFolder, $mfResponse)
 
     //namespace MyFatoorah\Library\API\Payment
     $mfLibFolder .= 'Payment/';
-    
+
     $mfApiPaymentNamespace = '<?php namespace MyFatoorah\Library\API\Payment; ';
     $useMfListClass        = 'use MyFatoorah\Library\API\MyFatoorahList; ';
     file_put_contents($mfLibFolder . 'MyFatoorahPayment.php', $mfApiPaymentNamespace . $useMfClass . $useExClass . $mfClass . $mfSplitFile[7]);

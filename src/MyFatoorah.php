@@ -13,7 +13,7 @@ use Exception;
  *
  * Created by MyFatoorah http://www.myfatoorah.com/
  * Developed By tech@myfatoorah.com
- * Date: 02/05/2023
+ * Date: 05/12/2023
  * Time: 12:00
  *
  * API Documentation on https://myfatoorah.readme.io/docs
@@ -25,6 +25,7 @@ use Exception;
  */
 class MyFatoorah extends MyFatoorahHelper
 {
+
     /**
      * The configuration used to connect to MyFatoorah test/live API server
      *
@@ -38,6 +39,13 @@ class MyFatoorah extends MyFatoorahHelper
      * @var string
      */
     protected $apiURL = '';
+
+    /**
+     * The MyFatoorah PHP Library version
+     *
+     * @var string
+     */
+    protected $version = '2.2';
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -60,6 +68,17 @@ class MyFatoorah extends MyFatoorahHelper
 
         $code         = $this->config['countryCode'];
         $this->apiURL = $this->config['isTest'] ? $mfCountries[$code]['testv2'] : $mfCountries[$code]['v2'];
+    }
+
+    /**
+     * Get the API URL
+     * The URL used to connect to MyFatoorah test/live API server
+     *
+     * @return string
+     */
+    public function getApiURL()
+    {
+        return $this->apiURL;
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -158,11 +177,11 @@ class MyFatoorah extends MyFatoorahHelper
     {
 
         //to prevent json_encode adding lots of decimal digits
-        ini_set('precision', 14);
-        ini_set('serialize_precision', -1);
+        ini_set('precision', '14');
+        ini_set('serialize_precision', '-1');
 
         $request = isset($postFields) ? 'POST' : 'GET';
-        $fields  = json_encode($postFields);
+        $fields  = empty($postFields) ? json_encode($postFields, JSON_FORCE_OBJECT) : json_encode($postFields);
 
         $msgLog = "Order #$orderId ----- $function";
         $this->log("$msgLog - Request: $fields");

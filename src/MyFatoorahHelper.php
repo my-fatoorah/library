@@ -9,6 +9,7 @@ use Exception;
  */
 class MyFatoorahHelper
 {
+
     /**
      * The file name or the logger object
      * It is used in logging the payment/shipping events to help in debugging and monitor the process and connections.

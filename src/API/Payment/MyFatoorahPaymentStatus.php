@@ -204,4 +204,21 @@ class MyFatoorahPaymentStatus extends MyFatoorahPayment
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Get the payment status link
+     *
+     * @param string $url       The payment URL link
+     * @param string $paymentId The payment Id
+     *
+     * @return string
+     */
+    public function getPaymentStatusLink($url, $paymentId)
+    {
+        //to overcome session urls
+        $pattern = '/MpgsAuthentication.*|ApplePayComplete.*|GooglePayComplete.*/i';
+        return preg_replace($pattern, "Result?paymentId=$paymentId", $url);
+    }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
 }

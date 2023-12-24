@@ -7,13 +7,14 @@ use PHPUnit\Framework\TestCase;
 
 class MyFatoorahPaymentStatusTest extends TestCase
 {
+
     private $keys;
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
     public function __construct()
     {
         parent::__construct();
-        $this->keys = include(__DIR__ . '/../../apiKeys.php');
+        $this->keys = include __DIR__ . '/../../apiKeys.php';
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------

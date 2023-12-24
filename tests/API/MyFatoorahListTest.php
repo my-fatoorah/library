@@ -6,13 +6,14 @@ use MyFatoorah\Library\API\MyFatoorahList;
 
 class MyFatoorahListTest extends \PHPUnit\Framework\TestCase
 {
+
     private $keys;
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
     public function __construct()
     {
         parent::__construct();
-        $this->keys = include(__DIR__ . '/../apiKeys.php');
+        $this->keys = include __DIR__ . '/../apiKeys.php';
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------

@@ -14,6 +14,7 @@ use Exception;
  */
 class MyFatoorahPayment extends MyFatoorah
 {
+
     /**
      * The file name used in caching the gateways data
      *
@@ -184,36 +185,26 @@ class MyFatoorahPayment extends MyFatoorah
 
         $this->log('------------------------------------------------------------');
 
-        $curlData['CustomerEmail'] = empty($curlData['CustomerEmail']) ? null : $curlData['CustomerEmail'];
+        $curlData['CustomerReference'] = $curlData['CustomerReference'] ?? $orderId;
 
         if (!empty($sessionId)) {
-            return $this->embeddedPayment($curlData, $sessionId, $orderId);
+            $curlData['SessionId'] = $sessionId;
+
+            $data = $this->executePayment($curlData);
+            return ['invoiceURL' => $data->PaymentURL, 'invoiceId' => $data->InvoiceId];
         } elseif ($gatewayId == 'myfatoorah' || empty($gatewayId)) {
-            return $this->sendPayment($curlData, $orderId, $notificationOption);
+            if (empty($curlData['NotificationOption'])) {
+                $curlData['NotificationOption'] = $notificationOption;
+            }
+
+            $data = $this->sendPayment($curlData);
+            return ['invoiceURL' => $data->InvoiceURL, 'invoiceId' => $data->InvoiceId];
         } else {
-            return $this->excutePayment($curlData, $gatewayId, $orderId);
+            $curlData['PaymentMethodId'] = $gatewayId;
+
+            $data = $this->executePayment($curlData);
+            return ['invoiceURL' => $data->PaymentURL, 'invoiceId' => $data->InvoiceId];
         }
-    }
-
-    //-----------------------------------------------------------------------------------------------------------------------------------------
-
-    /**
-     * (POST API)
-     *
-     * @param array      $curlData  Invoice information.
-     * @param int|string $gatewayId MyFatoorah Gateway ID.
-     * @param int|string $orderId   It used in log file (default value: null).
-     *
-     * @return array
-     */
-    private function excutePayment($curlData, $gatewayId, $orderId = null)
-    {
-
-        $curlData['PaymentMethodId'] = $gatewayId;
-
-        $json = $this->callAPI("$this->apiURL/v2/ExecutePayment", $curlData, $orderId, 'Excute Payment'); //__FUNCTION__
-
-        return ['invoiceURL' => $json->Data->PaymentURL, 'invoiceId' => $json->Data->InvoiceId];
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -221,40 +212,71 @@ class MyFatoorahPayment extends MyFatoorah
     /**
      * Create an invoice Link (POST API)
      *
-     * @param array      $curlData           Invoice information.
-     * @param int|string $orderId            It used in log file (default value: null).
-     * @param string     $notificationOption could be EML, SMS, LNK, or ALL.
+     * @param array $curlData Invoice information, check https://docs.myfatoorah.com/docs/send-payment#request-model.
      *
-     * @return array
+     * @return object
      */
-    private function sendPayment($curlData, $orderId = null, $notificationOption = 'Lnk')
+    public function sendPayment($curlData)
     {
 
-        $curlData['NotificationOption'] = $notificationOption;
+        $this->preparePayment($curlData);
 
-        $json = $this->callAPI("$this->apiURL/v2/SendPayment", $curlData, $orderId, 'Send Payment');
-
-        return ['invoiceURL' => $json->Data->InvoiceURL, 'invoiceId' => $json->Data->InvoiceId];
+        $json = $this->callAPI("$this->apiURL/v2/SendPayment", $curlData, $curlData['CustomerReference'], 'Send Payment');
+        return $json->Data;
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Create an invoice using Embedded session (POST API)
+     * Create an Payment Link (POST API)
      *
-     * @param array      $curlData  Invoice information.
-     * @param int|string $sessionId Session id used in payment process.
-     * @param int|string $orderId   It used in log file (default value: null).
+     * @param array $curlData Invoice information, check https://docs.myfatoorah.com/docs/execute-payment#required-fields.
      *
-     * @return array
+     * @return object
      */
-    private function embeddedPayment($curlData, $sessionId, $orderId = null)
+    public function executePayment($curlData)
     {
 
-        $curlData['SessionId'] = $sessionId;
+        $this->preparePayment($curlData);
 
-        $json = $this->callAPI("$this->apiURL/v2/ExecutePayment", $curlData, $orderId, 'Embedded Payment');
-        return ['invoiceURL' => $json->Data->PaymentURL, 'invoiceId' => $json->Data->InvoiceId];
+        $json = $this->callAPI("$this->apiURL/v2/ExecutePayment", $curlData, $curlData['CustomerReference'], 'Execute Payment'); //__FUNCTION__
+        return $json->Data;
+    }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Prepare payment array for SendPayment and ExecutePayment
+     *
+     * @param array $curlData Invoice information
+     */
+    private function preparePayment(&$curlData)
+    {
+
+        $curlData['CustomerReference'] = $curlData['CustomerReference'] ?? null;
+        $curlData['SourceInfo']        = $curlData['SourceInfo'] ?? 'MyFatoorah PHP Library ' . $this->version;
+
+        if (empty($curlData['CustomerEmail'])) {
+            $curlData['CustomerEmail'] = null;
+        }
+    }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Get session Data
+     *
+     * @param string     $userDefinedField Customer Identifier to display its saved data.
+     * @param int|string $logId            It used in log file, example you can use the orderId (default value: null).
+     *
+     * @return object
+     */
+    public function getEmbeddedSession($userDefinedField = '', $logId = null)
+    {
+
+        $curlData = ['CustomerIdentifier' => $userDefinedField];
+
+        return $this->InitiateSession($curlData, $logId);
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -262,17 +284,15 @@ class MyFatoorahPayment extends MyFatoorah
     /**
      * Get session Data (POST API)
      *
-     * @param string     $userDefinedField Customer Identifier to dispaly its saved data.
-     * @param int|string $orderId          It used in log file (default value: null).
+     * @param array      $curlData Session properties.
+     * @param int|string $logId    It used in log file, example you can use the orderId (default value: null).
      *
      * @return object
      */
-    public function getEmbeddedSession($userDefinedField = '', $orderId = null)
+    public function InitiateSession($curlData, $logId = null)
     {
 
-        $customerIdentifier = ['CustomerIdentifier' => $userDefinedField];
-
-        $json = $this->callAPI("$this->apiURL/v2/InitiateSession", $customerIdentifier, $orderId, 'Initiate Session');
+        $json = $this->callAPI("$this->apiURL/v2/InitiateSession", $curlData, $logId, 'Initiate Session');
         return $json->Data;
     }
 

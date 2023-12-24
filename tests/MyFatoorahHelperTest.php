@@ -6,6 +6,7 @@ use MyFatoorah\Library\MyFatoorah;
 
 class MyFatoorahHelperTest extends \PHPUnit\Framework\TestCase
 {
+
     //-----------------------------------------------------------------------------------------------------------------------------------------
     public function testGetPhone()
     {

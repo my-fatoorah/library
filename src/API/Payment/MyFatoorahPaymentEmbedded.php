@@ -13,6 +13,7 @@ use MyFatoorah\Library\API\MyFatoorahList;
  */
 class MyFatoorahPaymentEmbedded extends MyFatoorahPayment
 {
+
     /**
      * The checkoutGateways array is used to display the payment in the checkout page.
      *
@@ -40,12 +41,19 @@ class MyFatoorahPaymentEmbedded extends MyFatoorahPayment
 
         $gateways = $this->initiatePayment($invoiceValue, $displayCurrencyIso);
 
-        $mfListObj = new MyFatoorahList($this->config);
-        $allRates  = $mfListObj->getCurrencyRates();
+        $mfListObj    = new MyFatoorahList($this->config);
+        $allRates     = $mfListObj->getCurrencyRates();
+        $currencyRate = $mfListObj->getCurrencyRate($displayCurrencyIso, $allRates);
 
         self::$checkoutGateways = ['all' => [], 'cards' => [], 'form' => [], 'ap' => [], 'gp' => []];
         foreach ($gateways as $gateway) {
-            $gateway->GatewayData   = $this->calcGatewayData($gateway->TotalAmount, $gateway->CurrencyIso, $gateway->PaymentCurrencyIso, $allRates);
+            $gateway->PaymentTotalAmount = $this->getPaymentTotalAmount($gateway, $allRates, $currencyRate);
+
+            $gateway->GatewayData = [
+                'GatewayTotalAmount' => number_format($gateway->PaymentTotalAmount, 2),
+                'GatewayCurrency'    => $gateway->PaymentCurrencyIso
+            ];
+
             self::$checkoutGateways = $this->addGatewayToCheckoutGateways($gateway, self::$checkoutGateways, $isAppleRegistered);
         }
 
@@ -53,50 +61,39 @@ class MyFatoorahPaymentEmbedded extends MyFatoorahPayment
             //add only one ap gateway
             self::$checkoutGateways['ap'] = $this->getOneApplePayGateway(self::$checkoutGateways['ap'], $displayCurrencyIso, $allRates);
         }
-        
+
         return self::$checkoutGateways;
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Calculate the amount value that will be paid in each gateway
-     *
-     * @param double|int $totalAmount        The total amount of the invoice.
-     * @param string     $currency           The currency of the invoice total amount.
-     * @param string     $paymentCurrencyIso The currency of the gateway.
-     * @param array      $allRates           The MyFatoorah currency rate array of all gateways.
-     *
-     * @return array
+     * Calculate the amount value that will be paid in each payment method
+     * 
+     * @param object $paymentMethod The payment method object obtained from the initiate payment endpoint
+     * @param array  $allRates      The MyFatoorah currency rate array of all gateways.
+     * @param double $currencyRate  The currency rate of the invoice.
+     * 
+     * @return double
      */
-    protected function calcGatewayData($totalAmount, $currency, $paymentCurrencyIso, $allRates)
+    private function getPaymentTotalAmount($paymentMethod, $allRates, $currencyRate)
     {
 
-        foreach ($allRates as $data) {
-            if ($data->Text == $currency) {
-                $baseCurrencyRate = $data->Value;
-            }
-            if ($data->Text == $paymentCurrencyIso) {
-                $gatewayCurrencyRate = $data->Value;
-            }
+        if ($paymentMethod->PaymentCurrencyIso == $paymentMethod->CurrencyIso) {
+            return $paymentMethod->TotalAmount;
         }
 
-        if (isset($baseCurrencyRate) && isset($gatewayCurrencyRate)) {
-            $baseAmount = ceil(((int) ($totalAmount * 1000)) / $baseCurrencyRate / 10) / 100;
+        //convert to portal base currency
+        $baseTotalAmount = ceil(((int) ($paymentMethod->TotalAmount * 100)) / $currencyRate) / 100;
 
-            $number = ceil(($baseAmount * $gatewayCurrencyRate * 100)) / 100;
-            return [
-                'GatewayTotalAmount' => number_format($number, 2, '.', ''),
-                'GatewayCurrency'    => $paymentCurrencyIso
-            ];
-        } else {
-            return [
-                'GatewayTotalAmount' => $totalAmount,
-                'GatewayCurrency'    => $currency
-            ];
+        //gateway currency is not the portal currency
+        $mfListObj           = new MyFatoorahList($this->config);
+        $paymentCurrencyRate = $mfListObj->getCurrencyRate($paymentMethod->PaymentCurrencyIso, $allRates);
+        if ($paymentCurrencyRate != 1) {
+            return ceil($baseTotalAmount * $paymentCurrencyRate * 100) / 100;
         }
 
-        //        }
+        return $baseTotalAmount;
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------

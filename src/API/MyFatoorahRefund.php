@@ -19,6 +19,8 @@ class MyFatoorahRefund extends MyFatoorah
      * (deprecated function) use makeRefund instead
      * Refund a given PaymentId or InvoiceId
      *
+     * @deprecated
+     *
      * @param int|string        $keyId        payment id that will be refunded
      * @param double|int|string $amount       the refund amount
      * @param string            $currencyCode the amount currency
@@ -49,14 +51,14 @@ class MyFatoorahRefund extends MyFatoorah
      * Call makeRefund API (POST API)
      *
      * @param array      $curlData Refund information
-     * @param int|string $orderId  Used in log file (default value: null)
+     * @param int|string $logId    Used in log file, example you can use the orderId (default value: null)
      *
      * @return object
      */
-    public function makeRefund($curlData, $orderId = null)
+    public function makeRefund($curlData, $logId = null)
     {
         $url  = "$this->apiURL/v2/MakeRefund";
-        $json = $this->callAPI($url, $curlData, $orderId, 'Make Refund');
+        $json = $this->callAPI($url, $curlData, $logId, 'Make Refund');
         return $json->Data;
     }
 

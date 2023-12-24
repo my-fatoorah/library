@@ -7,13 +7,14 @@ use MyFatoorah\Library\API\MyFatoorahRefund;
 
 class MyFatoorahRefundTest extends TestCase
 {
+
     private $keys;
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
     public function __construct()
     {
         parent::__construct();
-        $this->keys = include(__DIR__ . '/../apiKeys.php');
+        $this->keys = include __DIR__ . '/../apiKeys.php';
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------

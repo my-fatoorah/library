@@ -8,19 +8,20 @@ use Exception;
  * MyFatoorah is responsible for handling calling MyFatoorah API endpoints.
  * Also, It has necessary library functions that help in providing the correct parameters used endpoints.
  *
- * MyFatoorah offers a seamless business experience by offering a technology put together by our tech team. It enables smooth business operations involving sales activity, product invoicing, shipping, and payment processing. MyFatoorah invoicing and payment gateway solution trigger your business to greater success at all levels in the new age world of commerce. Leverage your sales and payments at all e-commerce platforms (ERPs, CRMs, CMSs) with transparent and slick applications that are well-integrated into social media and telecom services. For every closing sale click, you make a business function gets done for you, along with generating factual reports and statistics to fine-tune your business plan with no-barrier low-cost.
- * Our technology experts have designed the best GCC E-commerce solutions for the native financial instruments (Debit Cards, Credit Cards, etc.) supporting online sales and payments, for events, shopping, mall, and associated services.
+ * MyFatoorah offers a seamless business experience by offering a technology put together by our tech team.
+ * It enables smooth business operations involving sales activity, product invoicing, shipping, and payment processing.
+ * MyFatoorah invoicing and payment gateway solution trigger your business to greater success at all levels in the new age world of commerce. Leverage your sales and payments at all e-commerce platforms (ERPs, CRMs, CMSs) with transparent and slick applications that are well-integrated into social media and telecom services. For every closing sale click, you make a business function gets done for you, along with generating factual reports and statistics to fine-tune your business plan with no-barrier low-cost. Our technology experts have designed the best GCC E-commerce solutions for the native financial instruments (Debit Cards, Credit Cards, etc.) supporting online sales and payments, for events, shopping, mall, and associated services.
  *
  * Created by MyFatoorah http://www.myfatoorah.com/
  * Developed By tech@myfatoorah.com
- * Date: 05/12/2023
+ * Date: 31/03/2024
  * Time: 12:00
  *
  * API Documentation on https://myfatoorah.readme.io/docs
  * Library Documentation and Download link on https://myfatoorah.readme.io/docs/php-library
  *
  * @author    MyFatoorah <tech@myfatoorah.com>
- * @copyright 2021 MyFatoorah, All rights reserved
+ * @copyright MyFatoorah, All rights reserved
  * @license   GNU General Public License v3.0
  */
 class MyFatoorah extends MyFatoorahHelper
@@ -52,7 +53,7 @@ class MyFatoorah extends MyFatoorahHelper
     /**
      * Constructor that initiates a new MyFatoorah API process
      *
-     * @param array $config It has the required keys (apiKey, isTest, and countryCode) to process a MyFatoorah API request.
+     * @param array $config It has the required keys (apiKey, isTest, and vcCode) to process a MyFatoorah API request.
      */
     public function __construct($config)
     {
@@ -61,12 +62,16 @@ class MyFatoorah extends MyFatoorahHelper
 
         $this->setApiKey($config);
         $this->setIsTest($config);
-        $this->setCountryCode($config);
+        $this->setVcCode($config);
 
-        self::$loggerObj            = $this->config['loggerObj']  = empty($config['loggerObj']) ? null : $config['loggerObj'];
-        self::$loggerFunc           = $this->config['loggerFunc'] = empty($config['loggerFunc']) ? null : $config['loggerFunc'];
+        $this->config['loggerObj']  = empty($config['loggerObj']) ? null : $config['loggerObj'];
+        $this->config['loggerFunc'] = empty($config['loggerFunc']) ? null : $config['loggerFunc'];
 
-        $code         = $this->config['countryCode'];
+        //to use logger as static
+        self::$loggerObj  = $this->config['loggerObj'];
+        self::$loggerFunc = $this->config['loggerFunc'];
+
+        $code         = $this->config['vcCode'];
         $this->apiURL = $this->config['isTest'] ? $mfCountries[$code]['testv2'] : $mfCountries[$code]['v2'];
     }
 
@@ -85,9 +90,10 @@ class MyFatoorah extends MyFatoorahHelper
 
     /**
      * Set the API token Key
-     * The API Token Key is the authentication which identify a user that is using the app. To generate one follow instruction here https://myfatoorah.readme.io/docs/live-token
+     * The API Token Key is the authentication which identify a user that is using the app.
+     * To generate one follow instruction here https://myfatoorah.readme.io/docs/live-token
      *
-     * @param array $config It has the required keys (apiKey, isTest, and countryCode) to process a MyFatoorah API request.
+     * @param array $config It has the required keys (apiKey, isTest, and vcCode) to process a MyFatoorah API request.
      *
      * @return void
      *
@@ -112,7 +118,7 @@ class MyFatoorah extends MyFatoorahHelper
     /**
      * Set the test mode. Set it to false for live mode
      *
-     * @param array $config It has the required keys (apiKey, isTest, and countryCode) to process a MyFatoorah API request.
+     * @param array $config It has the required keys (apiKey, isTest, and vcCode) to process a MyFatoorah API request.
      *
      * @return void
      *
@@ -134,29 +140,30 @@ class MyFatoorah extends MyFatoorahHelper
     //-----------------------------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Set the country code of the used MyFatoorah account
+     * Set the vendor country code of the MyFatoorah account
      *
-     * @param array $config It has the required keys (apiKey, isTest, and countryCode) to process a MyFatoorah API request.
+     * @param array $config It has the required keys (apiKey, isTest, and vcCode) to process a MyFatoorah API request.
      *
      * @return void
      *
      * @throws Exception
      */
-    protected function setCountryCode($config)
+    protected function setVcCode($config)
     {
-        if (empty($config['countryCode'])) {
-            throw new Exception('Config array must have the "countryCode" key.');
+        $config['vcCode'] = $config['vcCode'] ?? $config['countryCode'] ?? '';
+        if (empty($config['vcCode'])) {
+            throw new Exception('Config array must have the "vcCode" key.');
         }
 
         $mfCountries    = self::getMFCountries();
         $countriesCodes = array_keys($mfCountries);
 
-        $config['countryCode'] = strtoupper($config['countryCode']);
-        if (!in_array($config['countryCode'], $countriesCodes)) {
-            throw new Exception('The "countryCode" key must be one of (' . implode(', ', $countriesCodes) . ').');
+        $config['vcCode'] = strtoupper($config['vcCode']);
+        if (!in_array($config['vcCode'], $countriesCodes)) {
+            throw new Exception('The "vcCode" key must be one of (' . implode(', ', $countriesCodes) . ').');
         }
 
-        $this->config['countryCode'] = $config['countryCode'];
+        $this->config['vcCode'] = $config['vcCode'];
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -167,7 +174,7 @@ class MyFatoorah extends MyFatoorahHelper
      * @param string          $url        MyFatoorah API endpoint URL
      * @param array|null      $postFields POST request parameters array. It should be set to null if the request is GET.
      * @param int|string|null $orderId    The order id or the payment id of the process, used for the events logging.
-     * @param string|null     $function   The requester function name, used for the events logging.
+     * @param string|null     $function   The requester function name, used for the events logging. ex:__FUNCTION__.
      *
      * @return mixed       The response object as the result of a successful calling to the API.
      *
@@ -286,9 +293,9 @@ class MyFatoorah extends MyFatoorahHelper
         //</body>
         //</html>
         //and, skip apple register <YourDomainName> tag error
-        $stripHtmlStr = strip_tags($res);
-        if ($res != $stripHtmlStr && stripos($stripHtmlStr, 'apple-developer-merchantid-domain-association') !== false) {
-            return trim(preg_replace('/\s+/', ' ', $stripHtmlStr));
+        $stripHtml = strip_tags($res);
+        if ($res != $stripHtml && stripos($stripHtml, 'apple-developer-merchantid-domain-association') !== false) {
+            return trim(preg_replace('/\s+/', ' ', $stripHtml));
         }
         return '';
     }
@@ -334,7 +341,8 @@ class MyFatoorah extends MyFatoorahHelper
         //"Message":
         //"No HTTP resource was found that matches the request URI 'https://apitest.myfatoorah.com/v2/SendPayment222'.",
         //"MessageDetail":
-        //"No route providing a controller name was found to match request URI 'https://apitest.myfatoorah.com/v2/SendPayment222'"
+        //"No route providing a controller name was found to match request URI 
+        //'https://apitest.myfatoorah.com/v2/SendPayment222'"
         //}
 
         return empty($json->Message) ? '' : $json->Message;

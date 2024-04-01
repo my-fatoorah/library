@@ -8,14 +8,14 @@
  *
  * Created by MyFatoorah http://www.myfatoorah.com/
  * Developed By tech@myfatoorah.com
- * Date: 05/12/2023
+ * Date: 31/03/2024
  * Time: 12:00
  *
  * API Documentation on https://myfatoorah.readme.io/docs
  * Library Documentation and Download link on https://myfatoorah.readme.io/docs/php-library
  *
  * @author    MyFatoorah <tech@myfatoorah.com>
- * @copyright 2021 MyFatoorah, All rights reserved
+ * @copyright MyFatoorah, All rights reserved
  * @license   GNU General Public License v3.0
  */
 $mfVersion = '2.2';
@@ -36,7 +36,7 @@ try {
     $mfCurl = curl_init("https://portal.myfatoorah.com/Files/API/php/library/$mfVersion/MyfatoorahLibrary.txt");
     curl_setopt_array(
         $mfCurl, array(
-        CURLOPT_RETURNTRANSFER => true,            
+        CURLOPT_RETURNTRANSFER => true,
         )
     );
 

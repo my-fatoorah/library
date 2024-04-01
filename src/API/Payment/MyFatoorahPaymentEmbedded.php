@@ -8,7 +8,7 @@ use MyFatoorah\Library\API\MyFatoorahList;
  *  MyFatoorahPaymentForm handles the form process of MyFatoorah API endpoints
  *
  * @author    MyFatoorah <tech@myfatoorah.com>
- * @copyright 2021 MyFatoorah, All rights reserved
+ * @copyright MyFatoorah, All rights reserved
  * @license   GNU General Public License v3.0
  */
 class MyFatoorahPaymentEmbedded extends MyFatoorahPayment
@@ -26,40 +26,41 @@ class MyFatoorahPaymentEmbedded extends MyFatoorahPayment
     /**
      * List available Payment Methods
      *
-     * @param double|int $invoiceValue       Total invoice amount.
-     * @param string     $displayCurrencyIso Total invoice currency.
-     * @param bool       $isAppleRegistered  Is site domain is registered with applePay and MyFatoorah or not.
+     * @param double|int $invoiceAmount  The display invoice total amount.
+     * @param string     $currencyIso    The display invoice currency ISO.
+     * @param bool       $isApRegistered Is site domain is registered with ApplePay and MyFatoorah or not.
      *
      * @return array
      */
-    public function getCheckoutGateways($invoiceValue, $displayCurrencyIso, $isAppleRegistered)
+    public function getCheckoutGateways($invoiceAmount, $currencyIso, $isApRegistered)
     {
 
         if (!empty(self::$checkoutGateways)) {
             return self::$checkoutGateways;
         }
 
-        $gateways = $this->initiatePayment($invoiceValue, $displayCurrencyIso);
+        $gateways = $this->initiatePayment($invoiceAmount, $currencyIso);
 
         $mfListObj    = new MyFatoorahList($this->config);
         $allRates     = $mfListObj->getCurrencyRates();
-        $currencyRate = $mfListObj->getCurrencyRate($displayCurrencyIso, $allRates);
+        $currencyRate = MyFatoorahList::getOneCurrencyRate($currencyIso, $allRates);
 
         self::$checkoutGateways = ['all' => [], 'cards' => [], 'form' => [], 'ap' => [], 'gp' => []];
         foreach ($gateways as $gateway) {
             $gateway->PaymentTotalAmount = $this->getPaymentTotalAmount($gateway, $allRates, $currencyRate);
 
             $gateway->GatewayData = [
-                'GatewayTotalAmount' => number_format($gateway->PaymentTotalAmount, 2),
-                'GatewayCurrency'    => $gateway->PaymentCurrencyIso
+                'GatewayTotalAmount'   => number_format($gateway->PaymentTotalAmount, 2),
+                'GatewayCurrency'      => $gateway->PaymentCurrencyIso,
+                'GatewayTransCurrency' => self::getTranslatedCurrency($gateway->PaymentCurrencyIso),
             ];
 
-            self::$checkoutGateways = $this->addGatewayToCheckoutGateways($gateway, self::$checkoutGateways, $isAppleRegistered);
+            self::$checkoutGateways = $this->addGatewayToCheckout($gateway, self::$checkoutGateways, $isApRegistered);
         }
 
-        if ($isAppleRegistered) {
+        if ($isApRegistered) {
             //add only one ap gateway
-            self::$checkoutGateways['ap'] = $this->getOneApplePayGateway(self::$checkoutGateways['ap'], $displayCurrencyIso, $allRates);
+            self::$checkoutGateways['ap'] = $this->getOneEmbeddedGateway(self::$checkoutGateways['ap'], $currencyIso, $allRates);
         }
 
         return self::$checkoutGateways;
@@ -79,16 +80,17 @@ class MyFatoorahPaymentEmbedded extends MyFatoorahPayment
     private function getPaymentTotalAmount($paymentMethod, $allRates, $currencyRate)
     {
 
+        $dbTrucVal = ((int) ($paymentMethod->TotalAmount * 1000)) / 1000;
         if ($paymentMethod->PaymentCurrencyIso == $paymentMethod->CurrencyIso) {
-            return $paymentMethod->TotalAmount;
+            return ceil($dbTrucVal * 100) / 100;
         }
 
         //convert to portal base currency
-        $baseTotalAmount = ceil(((int) ($paymentMethod->TotalAmount * 100)) / $currencyRate) / 100;
+        $dueVal          = ($currencyRate == 1) ? $dbTrucVal : round($paymentMethod->TotalAmount / $currencyRate, 3);
+        $baseTotalAmount = ceil($dueVal * 100) / 100;
 
         //gateway currency is not the portal currency
-        $mfListObj           = new MyFatoorahList($this->config);
-        $paymentCurrencyRate = $mfListObj->getCurrencyRate($paymentMethod->PaymentCurrencyIso, $allRates);
+        $paymentCurrencyRate = MyFatoorahList::getOneCurrencyRate($paymentMethod->PaymentCurrencyIso, $allRates);
         if ($paymentCurrencyRate != 1) {
             return ceil($baseTotalAmount * $paymentCurrencyRate * 100) / 100;
         }
@@ -101,34 +103,62 @@ class MyFatoorahPaymentEmbedded extends MyFatoorahPayment
     /**
      * Returns One Apple pay array in case multiple are enabled in the account
      *
-     * @param array  $apGateways      The all available AP gateways
+     * @param array  $gateways        The all available AP/GP gateways
      * @param string $displayCurrency The currency of the invoice total amount.
      * @param array  $allRates        The MyFatoorah currency rate array of all gateways.
      *
      * @return array
      */
-    protected function getOneApplePayGateway($apGateways, $displayCurrency, $allRates)
+    private function getOneEmbeddedGateway($gateways, $displayCurrency, $allRates)
     {
 
-        $displayCurrencyIndex = array_search($displayCurrency, array_column($apGateways, 'PaymentCurrencyIso'));
+        $displayCurrencyIndex = array_search($displayCurrency, array_column($gateways, 'PaymentCurrencyIso'));
         if ($displayCurrencyIndex) {
-            return $apGateways[$displayCurrencyIndex];
+            return $gateways[$displayCurrencyIndex];
         }
 
         //get defult mf account currency
         $defCurKey       = array_search('1', array_column($allRates, 'Value'));
         $defaultCurrency = $allRates[$defCurKey]->Text;
 
-        $defaultCurrencyIndex = array_search($defaultCurrency, array_column($apGateways, 'PaymentCurrencyIso'));
+        $defaultCurrencyIndex = array_search($defaultCurrency, array_column($gateways, 'PaymentCurrencyIso'));
         if ($defaultCurrencyIndex) {
-            return $apGateways[$defaultCurrencyIndex];
+            return $gateways[$defaultCurrencyIndex];
         }
 
-        if (isset($apGateways[0])) {
-            return $apGateways[0];
+        if (isset($gateways[0])) {
+            return $gateways[0];
         }
 
         return [];
+    }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns the translation of the currency ISO code
+     *
+     * @param string $currency currency ISO code
+     *
+     * @return array
+     */
+    public static function getTranslatedCurrency($currency)
+    {
+
+        $currencies = [
+            'KWD' => ['en' => 'KD', 'ar' => 'د.ك'],
+            'SAR' => ['en' => 'SR', 'ar' => 'ريال'],
+            'BHD' => ['en' => 'BD', 'ar' => 'د.ب'],
+            'EGP' => ['en' => 'LE', 'ar' => 'ج.م'],
+            'QAR' => ['en' => 'QR', 'ar' => 'ر.ق'],
+            'OMR' => ['en' => 'OR', 'ar' => 'ر.ع'],
+            'JOD' => ['en' => 'JD', 'ar' => 'د.أ'],
+            'AED' => ['en' => 'AED', 'ar' => 'د'],
+            'USD' => ['en' => 'USD', 'ar' => 'دولار'],
+            'EUR' => ['en' => 'EUR', 'ar' => 'يورو']
+        ];
+
+        return $currencies[$currency] ?? ['en' => '', 'ar' => ''];
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------

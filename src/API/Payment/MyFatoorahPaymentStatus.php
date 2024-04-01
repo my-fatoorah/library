@@ -8,7 +8,7 @@ use Exception;
  *  MyFatoorahPaymentStatus handles the payment status of MyFatoorah API endpoints
  *
  * @author    MyFatoorah <tech@myfatoorah.com>
- * @copyright 2021 MyFatoorah, All rights reserved
+ * @copyright MyFatoorah, All rights reserved
  * @license   GNU General Public License v3.0
  */
 class MyFatoorahPaymentStatus extends MyFatoorahPayment
@@ -80,7 +80,7 @@ class MyFatoorahPaymentStatus extends MyFatoorahPayment
 
         //check for the order price and currency
         list($valStr, $mfCurrency) = explode(' ', $data->InvoiceDisplayValue);
-        $mfPrice = floatval(preg_replace('/[^\d.]/', '', $valStr));
+        $mfPrice = (double) (preg_replace('/[^\d.]/', '', $valStr));
 
         if ($price && $price != $mfPrice) {
             return false;
@@ -201,23 +201,6 @@ class MyFatoorahPaymentStatus extends MyFatoorahPayment
         usort($transactions, $usortFun);
 
         return end($transactions);
-    }
-
-    //-----------------------------------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Get the payment status link
-     *
-     * @param string $url       The payment URL link
-     * @param string $paymentId The payment Id
-     *
-     * @return string
-     */
-    public function getPaymentStatusLink($url, $paymentId)
-    {
-        //to overcome session urls
-        $pattern = '/MpgsAuthentication.*|ApplePayComplete.*|GooglePayComplete.*/i';
-        return preg_replace($pattern, "Result?paymentId=$paymentId", $url);
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------

@@ -8,7 +8,7 @@ use MyFatoorah\Library\MyFatoorah;
  *  MyFatoorahRefund handles the refund process of MyFatoorah API endpoints
  *
  * @author    MyFatoorah <tech@myfatoorah.com>
- * @copyright 2021 MyFatoorah, All rights reserved
+ * @copyright MyFatoorah, All rights reserved
  * @license   GNU General Public License v3.0
  */
 class MyFatoorahRefund extends MyFatoorah
@@ -21,16 +21,16 @@ class MyFatoorahRefund extends MyFatoorah
      *
      * @deprecated
      *
-     * @param int|string        $keyId        payment id that will be refunded
-     * @param double|int|string $amount       the refund amount
-     * @param string            $currencyCode the amount currency
-     * @param string            $comment      reason of the refund
-     * @param int|string        $orderId      used in log file (default value: null)
-     * @param string            $keyType      supported keys are (InvoiceId, PaymentId)
+     * @param int|string        $keyId    payment id that will be refunded
+     * @param double|int|string $amount   the refund amount
+     * @param string            $currency the amount currency
+     * @param string            $comment  reason of the refund
+     * @param int|string        $orderId  used in log file (default value: null)
+     * @param string            $keyType  supported keys are (InvoiceId, PaymentId)
      *
      * @return object
      */
-    public function refund($keyId, $amount, $currencyCode = null, $comment = null, $orderId = null, $keyType = 'PaymentId')
+    public function refund($keyId, $amount, $currency = null, $comment = null, $orderId = null, $keyType = 'PaymentId')
     {
         $postFields = [
             'Key'                     => $keyId,
@@ -38,7 +38,7 @@ class MyFatoorahRefund extends MyFatoorah
             'RefundChargeOnCustomer'  => false,
             'ServiceChargeOnCustomer' => false,
             'Amount'                  => $amount,
-            'CurrencyIso'             => $currencyCode,
+            'CurrencyIso'             => $currency,
             'Comment'                 => $comment,
         ];
 

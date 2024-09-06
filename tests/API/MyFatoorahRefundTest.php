@@ -33,4 +33,31 @@ class MyFatoorahRefundTest extends TestCase
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
+    public function testMakeRefund()
+    {
+        $postFields = [
+            'Key' => 100202312116138082,
+            'KeyType' => 'PaymentId',
+            'RefundChargeOnCustomer' => false, 'ServiceChargeOnCustomer' => false,
+            'Amount' => 2,
+            'CurrencyIso' => 'KWD',
+            'Comment' => 'test'
+        ];
+
+        foreach ($this->keys as $config) {
+            try {
+
+                $mfObj = new MyFatoorahRefund($config);
+                $json = $mfObj->makeRefund($postFields);
+
+                $this->assertEquals('100202312116138082', $json->Key);
+                $this->assertNotNull($json->RefundReference);
+            } catch (\Exception $ex) {
+                $exception = $config['refundException'] ?? $config['exception'];
+                $this->assertEquals($exception, $ex->getMessage(), $config['message']);
+            }
+        }
+    }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
 }

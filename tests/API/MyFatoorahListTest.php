@@ -19,7 +19,6 @@ class MyFatoorahListTest extends \PHPUnit\Framework\TestCase
     //-----------------------------------------------------------------------------------------------------------------------------------------
     public function testGetCurrencyRates()
     {
-
         foreach ($this->keys as $config) {
             try {
                 $mfObj = new MyFatoorahList($config);

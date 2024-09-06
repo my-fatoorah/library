@@ -82,20 +82,38 @@ class MyFatoorahPaymentEmbedded extends MyFatoorahPayment
 
         $dbTrucVal = ((int) ($paymentMethod->TotalAmount * 1000)) / 1000;
         if ($paymentMethod->PaymentCurrencyIso == $paymentMethod->CurrencyIso) {
-            return ceil($dbTrucVal * 100) / 100;
+            return $this->roundUp($dbTrucVal, 2);
         }
 
         //convert to portal base currency
         $dueVal          = ($currencyRate == 1) ? $dbTrucVal : round($paymentMethod->TotalAmount / $currencyRate, 3);
-        $baseTotalAmount = ceil($dueVal * 100) / 100;
+        $baseTotalAmount = $this->roundUp($dueVal, 2);
 
         //gateway currency is not the portal currency
         $paymentCurrencyRate = MyFatoorahList::getOneCurrencyRate($paymentMethod->PaymentCurrencyIso, $allRates);
         if ($paymentCurrencyRate != 1) {
-            return ceil($baseTotalAmount * $paymentCurrencyRate * 100) / 100;
+            $paymentTotalAmount = $baseTotalAmount * $paymentCurrencyRate;
+            return $this->roundUp($paymentTotalAmount, 2);
         }
 
         return $baseTotalAmount;
+    }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns the next highest float value by rounding up to a certain decimal
+     * 
+     * @param mixed $number
+     * @param mixed $decimalPlaces
+     * 
+     * @return float
+     */
+    private function roundUp($number, $decimalPlaces)
+    {
+        $multi   = pow(10, $decimalPlaces);
+        $nrAsStr = (string) ($number * $multi);
+        return ceil((float) $nrAsStr) / $multi;
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------

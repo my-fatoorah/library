@@ -256,6 +256,16 @@ class MyFatoorahPayment extends MyFatoorah
         $curlData['CustomerReference'] = $curlData['CustomerReference'] ?? null;
         $curlData['SourceInfo']        = $curlData['SourceInfo'] ?? 'MyFatoorah PHP Library ' . $this->version;
 
+        if (!empty($curlData['CustomerName'])) {
+            $curlData['CustomerName'] = preg_replace('/[^\p{L}\p{N}\s]/u', '', $curlData['CustomerName']);
+        }
+
+        if (!empty($curlData['InvoiceItems'])) {
+            foreach ($curlData['InvoiceItems'] as &$item) {
+                $item['ItemName'] = strip_tags($item['ItemName']);
+            }
+        }
+
         if (empty($curlData['CustomerEmail'])) {
             $curlData['CustomerEmail'] = null;
         }

@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ------------------------------
+## [2.2.9] - 2025-01-22
+### Changed
+- Apply the regex expression for the customer name, invoice item names, and item product names
+- Fix displaying of Arabic letters in the log 
+- Remove Initiate Payment and Get Currencies change list endpoint logs
+
+------------------------------
 ## [2.2.8] - 2024-09-06
 ### Changed
 - Fix the display of the checkout price.
@@ -89,6 +96,7 @@ Fix many requests in the MyFatoorah autoloader
 The first version of the library
 
 ------------------------------
+[2.2.9]: https://dev.azure.com/myfatoorahsc/Public-Repo/_git/Library?version=GT2.2.9
 [2.2.8]: https://dev.azure.com/myfatoorahsc/Public-Repo/_git/Library?version=GT2.2.8
 [2.2.7]: https://dev.azure.com/myfatoorahsc/Public-Repo/_git/Library?version=GT2.2.7
 [2.2.6]: https://dev.azure.com/myfatoorahsc/Public-Repo/_git/Library?version=GT2.2.6

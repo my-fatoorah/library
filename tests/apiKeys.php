@@ -26,12 +26,12 @@ return [
         'exception'   => 'The token is not valid or it is expired!'
     ],
     'notAuthorized' => [
-        'apiKey'                    => '0LLrGl7Il9eO-sbFpneJbjGzjqHVqddt1MTAbi8uJS9Zhg0kuUwvv23kTKR-ZgTzAZxsNotlHX3knyDtsxpJsSa5YoywApfAG0eUvnMUY2mA211f_gRh0JhD9m_lVbhsTbavYkrfhh7Zb5P-KKfxhszEbNyUZM1mPfZ5UhrfjodKuUP_Q-Wu5iYxXP6jLOFDQTCSj3IjU0EZSvetcblo6g6wZ6IKjPGbESFn_1K1PswvrGKYjhWAACc6w_RcWt13k5NwNSZgPXlmVeEDTa7azgqArmSHk0f3Fz_3o4JytdaqdbJ3AfaVbz6S9oCtD8Vv_uwJMEn2xQvXagbTJ3g6TRxL1vs8zjY-KIKLlupmnq94pUijzSjj4hnY60YaxcYXn4rIWQtqoqbMExzHEsbhXdCefiqVu7-IXpYQpyVnXndH9dqXYAhXuOFBgv7E5pmarwq7EbozX5S0zQov38R4AsFvQUNHa2fj2R0yrX7iEzo96HHzaWvAnMFX6qVGbnJbNLpKgkjt5SHHYLzd8pPcDCwu2RNTGkHvw720qM6ifuNc2qN5KQgLwVgJ59fOpMWFA66dkCCjqKIQQgwbHLSxvLkSLlbh3DtcKtk3YCkPgXj5mwH7GCGcK_xyu8ZREgRSedM7ev7wL5tciZ6sTXWFQLXrNp3hdkk2x7Emm8WD2w5J89rA',
-        'countryCode'               => 'KWT',
-        'isTest'                    => true,
-        'message'                   => 'Not Authorized',
-        'exception'                 => 'Exception: You are not Authorized to use API.',
-        'getCurrencyRatesException' => 'You are not Authorized to use API.',
+        'apiKey'      => '0LLrGl7Il9eO-sbFpneJbjGzjqHVqddt1MTAbi8uJS9Zhg0kuUwvv23kTKR-ZgTzAZxsNotlHX3knyDtsxpJsSa5YoywApfAG0eUvnMUY2mA211f_gRh0JhD9m_lVbhsTbavYkrfhh7Zb5P-KKfxhszEbNyUZM1mPfZ5UhrfjodKuUP_Q-Wu5iYxXP6jLOFDQTCSj3IjU0EZSvetcblo6g6wZ6IKjPGbESFn_1K1PswvrGKYjhWAACc6w_RcWt13k5NwNSZgPXlmVeEDTa7azgqArmSHk0f3Fz_3o4JytdaqdbJ3AfaVbz6S9oCtD8Vv_uwJMEn2xQvXagbTJ3g6TRxL1vs8zjY-KIKLlupmnq94pUijzSjj4hnY60YaxcYXn4rIWQtqoqbMExzHEsbhXdCefiqVu7-IXpYQpyVnXndH9dqXYAhXuOFBgv7E5pmarwq7EbozX5S0zQov38R4AsFvQUNHa2fj2R0yrX7iEzo96HHzaWvAnMFX6qVGbnJbNLpKgkjt5SHHYLzd8pPcDCwu2RNTGkHvw720qM6ifuNc2qN5KQgLwVgJ59fOpMWFA66dkCCjqKIQQgwbHLSxvLkSLlbh3DtcKtk3YCkPgXj5mwH7GCGcK_xyu8ZREgRSedM7ev7wL5tciZ6sTXWFQLXrNp3hdkk2x7Emm8WD2w5J89rA',
+        'countryCode' => 'KWT',
+        'isTest'      => true,
+        'message'     => 'Not Authorized',
+        'exception'   => 'Exception: You are not Authorized to use API.',
+        //'getCurrencyRatesException' => 'You are not Authorized to use API.',
         //'exception'                 => 'Invalid Account Information!, Please check the Dhl account information and try again.',
         //'refundException'           => 'Key: No transaction exist matching this Key!',
         //'supplierException'         => 'Not Found',

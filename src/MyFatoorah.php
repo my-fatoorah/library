@@ -182,13 +182,12 @@ class MyFatoorah extends MyFatoorahHelper
      */
     public function callAPI($url, $postFields = null, $orderId = null, $function = null)
     {
-
-        //to prevent json_encode adding lots of decimal digits
+        // Prevent json_encode from adding lots of decimal digits
         ini_set('precision', '14');
         ini_set('serialize_precision', '-1');
 
         $request = isset($postFields) ? 'POST' : 'GET';
-        $fields  = empty($postFields) ? json_encode($postFields, JSON_FORCE_OBJECT) : json_encode($postFields);
+        $fields  = empty($postFields) ? json_encode($postFields, JSON_FORCE_OBJECT) : json_encode($postFields, JSON_UNESCAPED_UNICODE);
 
         $msgLog = "Order #$orderId ----- $function";
         $this->log("$msgLog - Request: $fields");

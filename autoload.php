@@ -35,9 +35,7 @@ touch($mfLibFile);
 try {
     $mfCurl = curl_init("https://portal.myfatoorah.com/Files/API/php/library/$mfVersion/MyfatoorahLibrary.txt");
     curl_setopt_array(
-        $mfCurl, array(
-        CURLOPT_RETURNTRANSFER => true,
-        )
+        $mfCurl, array(CURLOPT_RETURNTRANSFER => true)
     );
 
     $mfResponse = curl_exec($mfCurl);

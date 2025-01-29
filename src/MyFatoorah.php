@@ -193,7 +193,7 @@ class MyFatoorah extends MyFatoorahHelper
         $this->log("$msgLog - Request: $fields");
 
         //***************************************
-        //call url
+        //Call API url
         //***************************************
         $curl = curl_init($url);
 
@@ -211,7 +211,7 @@ class MyFatoorah extends MyFatoorahHelper
 
         curl_close($curl);
 
-        //example set a local ip to host apitest.myfatoorah.com
+        //Check for cURL errors
         if ($err) {
             $this->log("$msgLog - cURL Error: $err");
             throw new Exception('cURL Error: ' . $err);
@@ -222,9 +222,8 @@ class MyFatoorah extends MyFatoorahHelper
         $json = json_decode((string) $res);
 
         //***************************************
-        //check for errors
+        //Check for reponse errors
         //***************************************
-        //Check for the reponse errors
         $error = self::getAPIError($json, (string) $res);
         if ($error) {
             $this->log("$msgLog - Error: $error");

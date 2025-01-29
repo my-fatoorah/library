@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ------------------------------
 ## [2.2.9] - 2025-01-22
 ### Changed
+- Add STC to be displayed in the card section (redirection)
 - Apply the regex expression for the customer name, invoice item names, and item product names
 - Fix displaying of Arabic letters in the log 
 - Remove Initiate Payment and Get Currencies change list endpoint logs

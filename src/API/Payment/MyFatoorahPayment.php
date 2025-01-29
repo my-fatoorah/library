@@ -120,6 +120,9 @@ class MyFatoorahPayment extends MyFatoorah
                 $checkoutGateways['cards'][] = $gateway;
             }
             $checkoutGateways['all'][] = $gateway;
+        } elseif ($gateway->PaymentMethodCode == 'stc') {
+            $checkoutGateways['cards'][] = $gateway;
+            $checkoutGateways['all'][]   = $gateway;
         } else {
             if ($gateway->IsEmbeddedSupported) {
                 $checkoutGateways['form'][] = $gateway;

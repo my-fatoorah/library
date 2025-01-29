@@ -197,14 +197,14 @@ class MyFatoorah extends MyFatoorahHelper
         //***************************************
         $curl = curl_init($url);
 
-        $option = [
+        $options = [
             CURLOPT_CUSTOMREQUEST  => $request,
             CURLOPT_POSTFIELDS     => $fields,
             CURLOPT_HTTPHEADER     => ['Authorization: Bearer ' . $this->config['apiKey'], 'Content-Type: application/json'],
             CURLOPT_RETURNTRANSFER => true
         ];
 
-        curl_setopt_array($curl, $option);
+        curl_setopt_array($curl, $options);
 
         $res = curl_exec($curl);
         $err = curl_error($curl);
@@ -214,7 +214,7 @@ class MyFatoorah extends MyFatoorahHelper
         //example set a local ip to host apitest.myfatoorah.com
         if ($err) {
             $this->log("$msgLog - cURL Error: $err");
-            throw new Exception($err);
+            throw new Exception('cURL Error: ' . $err);
         }
 
         $this->log("$msgLog - Response: $res");

@@ -7,7 +7,8 @@
         "testv1": "https://apidemo.myfatoorah.com",
         "testv2": "https://apitest.myfatoorah.com",
         "countryNameAr": "الكويت",
-        "countryNameEn": "Kuwait"
+        "countryNameEn": "Kuwait",
+        "timeZone": "Asia/Kuwait"
     },
     "SAU": {
         "portal": "https://sa.myfatoorah.com",
@@ -17,17 +18,19 @@
         "testv1": "https://apidemo.myfatoorah.com",
         "testv2": "https://apitest.myfatoorah.com",
         "countryNameAr": "السعودية",
-        "countryNameEn": "Saudi Arabia"
+        "countryNameEn": "Saudi Arabia",
+        "timeZone": "Asia/Riyadh"
     },
     "ARE": {
-        "portal": "https://portal.myfatoorah.com",
+        "portal": "https://ae.myfatoorah.com",
         "v1": "https://apiae.myfatoorah.com",
-        "v2": "https://api.myfatoorah.com",
+        "v2": "https://api-ae.myfatoorah.com",
         "testPortal": "https://demo.myfatoorah.com",
         "testv1": "https://apidemo.myfatoorah.com",
         "testv2": "https://apitest.myfatoorah.com",
         "countryNameAr": "الإمارات العربية المتحدة",
-        "countryNameEn": "United Arab Emirates"
+        "countryNameEn": "United Arab Emirates",
+        "timeZone": "Asia/Dubai"
     },
     "QAT": {
         "portal": "https://qa.myfatoorah.com",
@@ -37,7 +40,8 @@
         "testv1": "https://apidemo.myfatoorah.com",
         "testv2": "https://apitest.myfatoorah.com",
         "countryNameAr": "قطر",
-        "countryNameEn": "Qatar"
+        "countryNameEn": "Qatar",
+        "timeZone": "Asia/Qatar"
     },
     "BHR": {
         "portal": "https://portal.myfatoorah.com",
@@ -47,7 +51,8 @@
         "testv1": "https://apidemo.myfatoorah.com",
         "testv2": "https://apitest.myfatoorah.com",
         "countryNameAr": "البحرين",
-        "countryNameEn": "Bahrain"
+        "countryNameEn": "Bahrain",
+        "timeZone": "Asia/Kuwait"
     },
     "OMN": {
         "portal": "https://portal.myfatoorah.com",
@@ -57,9 +62,10 @@
         "testv1": "https://apidemo.myfatoorah.com",
         "testv2": "https://apitest.myfatoorah.com",
         "countryNameAr": "عمان",
-        "countryNameEn": "Oman"
+        "countryNameEn": "Oman",
+        "timeZone": "Asia/Kuwait"
     },
-    "JOD": {
+    "JOR": {
         "portal": "https://portal.myfatoorah.com",
         "v1": "https://apijo.myfatoorah.com",
         "v2": "https://api.myfatoorah.com",
@@ -67,7 +73,8 @@
         "testv1": "https://apidemo.myfatoorah.com",
         "testv2": "https://apitest.myfatoorah.com",
         "countryNameAr": "اﻷردن",
-        "countryNameEn": "Jordan"
+        "countryNameEn": "Jordan",
+        "timeZone": "Asia/Kuwait"
     },
     "EGY": {
         "portal": "https://eg.myfatoorah.com",
@@ -77,6 +84,7 @@
         "testv1": "https://apidemo.myfatoorah.com",
         "testv2": "https://apitest.myfatoorah.com",
         "countryNameAr": "مصر",
-        "countryNameEn": "Egypt"
+        "countryNameEn": "Egypt",
+        "timeZone": "Africa/Cairo"
     }
 }

@@ -18,7 +18,7 @@ class MyFatoorahList extends MyFatoorah
 
     /**
      * Gets the rate of a given currency according to the default currency of the MyFatoorah portal account.
-     * 
+     *
      * @param string $currency The currency that will be converted into the currency of MyFatoorah portal account.
      * @param array  $allRates An array of MyFatoorah currencies and rates
      *

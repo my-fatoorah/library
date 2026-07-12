@@ -7,7 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class MyFatoorahPaymentEmbeddedTest extends TestCase
 {
-
     private $keys;
 
     //-----------------------------------------------------------------------------------------------------------------------------------------

@@ -6,7 +6,6 @@ use MyFatoorah\Library\API\Payment\MyFatoorahPayment;
 
 class MyFatoorahPaymentTest extends \PHPUnit\Framework\TestCase
 {
-
     private $keys;
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -62,8 +61,8 @@ class MyFatoorahPaymentTest extends \PHPUnit\Framework\TestCase
                         ]],
                     'NotificationOption' => 'LNK'
                 ];
-                $json     = $mfObj->sendPayment($curlData);
 
+                $json = $mfObj->sendPayment($curlData);
                 $this->assertArrayHasKey('InvoiceURL', (array) $json);
             } catch (\Exception $ex) {
                 $this->assertEquals($config['exception'], $ex->getMessage(), $config['message']);

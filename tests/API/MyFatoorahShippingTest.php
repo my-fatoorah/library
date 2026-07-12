@@ -6,7 +6,6 @@ use MyFatoorah\Library\API\MyFatoorahShipping;
 
 class MyFatoorahShippingTest extends \PHPUnit\Framework\TestCase
 {
-
     private $keys;
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -58,7 +57,7 @@ class MyFatoorahShippingTest extends \PHPUnit\Framework\TestCase
             'Items'          => [
                 [
                     'ProductName' => '<span>product</span>',
-                    'Description' => 'product',
+                    'Description' => '<strong>product</strong>',
                     'Weight'      => 10,
                     'Width'       => 10,
                     'Height'      => 10,

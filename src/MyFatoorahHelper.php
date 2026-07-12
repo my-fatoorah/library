@@ -9,6 +9,7 @@ use Exception;
  */
 class MyFatoorahHelper
 {
+    //-----------------------------------------------------------------------------------------------------------------------------------------
 
     /**
      * The file name or the logger object
@@ -61,7 +62,7 @@ class MyFatoorahHelper
         //check for the allowed length
         $len = strlen($string4);
         if ($len < 3 || $len > 14) {
-            throw new Exception('Phone Number lenght must be between 3 to 14 digits');
+            throw new Exception('Phone Number length must be between 3 to 14 digits');
         }
 
         //get the phone arr
@@ -174,34 +175,51 @@ class MyFatoorahHelper
     //-----------------------------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Validate webhook signature function
+     * Validate Webhook version 1 signature function
+     * keep it for the old system
      *
-     * @param array  $dataArray webhook request array
-     * @param string $secret    webhook secret key
+     * @param array  $dataModel Webhook request array
+     * @param string $secretKey Webhook secret key
      * @param string $signature MyFatoorah signature
      * @param int    $eventType MyFatoorah Event type Number (1, 2, 3 , 4)
      *
      * @return boolean
      */
-    public static function isSignatureValid($dataArray, $secret, $signature, $eventType = 0)
+    public static function isSignatureValid($dataModel, $secretKey, $signature, $eventType = 1)
     {
 
         if ($eventType == 2) {
-            unset($dataArray['GatewayReference']);
+            unset($dataModel['GatewayReference']);
         }
 
-        uksort($dataArray, 'strcasecmp');
+        uksort($dataModel, 'strcasecmp');
 
+        return self::checkSignatureValidation($dataModel, $secretKey, $signature);
+    }
+
+    /**
+     * Checks whether the provided signature is correct or not for MyFatoorah Webhook
+     *
+     * @param array  $dataModel
+     * @param string $secretKey
+     * @param string $signature
+     *
+     * @return boolean
+     */
+    protected static function checkSignatureValidation($dataModel, $secretKey, $signature)
+    {
         $mapFun = function ($v, $k) {
             return sprintf("%s=%s", $k, $v);
         };
-        $outputArr = array_map($mapFun, $dataArray, array_keys($dataArray));
+
+        $outputArr = array_map($mapFun, $dataModel, array_keys($dataModel));
         $output    = implode(',', $outputArr);
 
         // generate hash of $field string
-        $hash = base64_encode(hash_hmac('sha256', $output, $secret, true));
+        $hash = base64_encode(hash_hmac('sha256', $output, $secretKey, true));
 
-        return $signature === $hash;
+        return hash_equals($hash, $signature);
+        //return $signature === $hash;
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------

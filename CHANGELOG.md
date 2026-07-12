@@ -4,12 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ------------------------------
-## [2.2.9] - 2025-01-22
-### Changed
+## [2.2.10] - 2026-07-12
+- Introduced support for MyFatoorah V3 payments/sessions API
+- Replace arrow functions with anonymous functions for compatibility with older PHP versions
+- Update autoload.php's self-update routine to:
+ 1. generate the new V3 class files
+ 2. add curl connect/read timeouts so a slow update server can't hang the request indefinitely
+ 3. surface previously silent failures (bad HTTP status/response shape) via trigger_error()
+
+------------------------------
+## [2.2.9] - 2026-02-12
+- Introduced support for Webhook v2
+- Optimize the "add Gateway To Checkout" function
+- Limited embedded Apple Pay / Google Pay to a single gateway
 - Add STC to be displayed in the card section (redirection)
-- Apply the regex expression for the customer name, invoice item names, and item product names
+- Apply the regex expression for the customer name, invoice item names, item product names, and item product description
 - Fix displaying of Arabic letters in the log 
-- Remove Initiate Payment and Get Currencies change list endpoint logs
 
 ------------------------------
 ## [2.2.8] - 2024-09-06
@@ -97,6 +107,7 @@ Fix many requests in the MyFatoorah autoloader
 The first version of the library
 
 ------------------------------
+[2.2.10]: https://dev.azure.com/myfatoorahsc/Public-Repo/_git/Library?version=GT2.2.10
 [2.2.9]: https://dev.azure.com/myfatoorahsc/Public-Repo/_git/Library?version=GT2.2.9
 [2.2.8]: https://dev.azure.com/myfatoorahsc/Public-Repo/_git/Library?version=GT2.2.8
 [2.2.7]: https://dev.azure.com/myfatoorahsc/Public-Repo/_git/Library?version=GT2.2.7

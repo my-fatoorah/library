@@ -63,6 +63,7 @@ class MyFatoorahShipping extends MyFatoorah
         if (!empty($curlData['Items'])) {
             foreach ($curlData['Items'] as &$item) {
                 $item['ProductName'] = strip_tags($item['ProductName']);
+                $item['Description'] = strip_tags($item['Description']);
             }
         }
 

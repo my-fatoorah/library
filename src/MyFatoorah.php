@@ -26,6 +26,7 @@ use Exception;
  */
 class MyFatoorah extends MyFatoorahHelper
 {
+    //-----------------------------------------------------------------------------------------------------------------------------------------
 
     /**
      * The configuration used to connect to MyFatoorah test/live API server
@@ -339,7 +340,7 @@ class MyFatoorah extends MyFatoorahHelper
         //"Message":
         //"No HTTP resource was found that matches the request URI 'https://apitest.myfatoorah.com/v2/SendPayment222'.",
         //"MessageDetail":
-        //"No route providing a controller name was found to match request URI 
+        //"No route providing a controller name was found to match request URI
         //'https://apitest.myfatoorah.com/v2/SendPayment222'"
         //}
 
@@ -368,6 +369,49 @@ class MyFatoorah extends MyFatoorahHelper
         } elseif (method_exists($loggerObj, $loggerFunc)) {
             $loggerObj->{$loggerFunc}($msg);
         }
+    }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Get the vendor time zone based on the configured vendor country code.
+     *
+     * In test mode, the Kuwait time zone is always used.
+     * In live mode, the time zone is resolved from the vendor country configuration.
+     *
+     * @return string The vendor time zone.
+     */
+    protected function getVendorTimeZone()
+    {
+        $countries = self::getMFCountries();
+
+        $vcCode = $this->config['vcCode'];
+        $isTest = $this->config['isTest'];
+
+        return ($isTest) ? $countries['KWT']['timeZone'] : $countries[$vcCode]['timeZone'];
+    }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Get the localized ExpiryDate based on the vendor’s country using ExpiryMinutes.
+     *
+     * @param int|string $expiryMinutes The number of minutes after which the invoice expires.
+     *
+     * @return string
+     */
+    public function getExpiryDate($expiryMinutes)
+    {
+        if (!ctype_digit((string) $expiryMinutes) || (int) $expiryMinutes <= 0) {
+            return '';
+        }
+
+        $timeZone = $this->getVendorTimeZone();
+
+        $nowDate = new \DateTime('now', new \DateTimeZone($timeZone));
+        $nowDate->modify("+$expiryMinutes minutes");
+
+        return $nowDate->format('Y-m-d\TH:i:s');
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------

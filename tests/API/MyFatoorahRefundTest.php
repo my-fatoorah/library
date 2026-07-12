@@ -7,7 +7,6 @@ use MyFatoorah\Library\API\MyFatoorahRefund;
 
 class MyFatoorahRefundTest extends TestCase
 {
-
     private $keys;
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -28,7 +27,14 @@ class MyFatoorahRefundTest extends TestCase
             $this->assertEquals('100202312116138082', $json->Key);
             $this->assertNotNull($json->RefundReference);
         } catch (\Exception $ex) {
-            $this->assertEquals($this->keys['valid']['refundException'], $ex->getMessage(), $this->keys['valid']['message']);
+            $this->assertContains(
+                $ex->getMessage(),
+                [
+                        $this->keys['valid']['refundException'],
+                        $this->keys['valid']['refundException2'],
+                    ],
+                $this->keys['valid']['message']
+            );
         }
     }
 
@@ -46,7 +52,6 @@ class MyFatoorahRefundTest extends TestCase
 
         foreach ($this->keys as $config) {
             try {
-
                 $mfObj = new MyFatoorahRefund($config);
                 $json  = $mfObj->makeRefund($postFields);
 

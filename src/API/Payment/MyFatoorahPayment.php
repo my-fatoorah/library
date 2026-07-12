@@ -14,6 +14,7 @@ use Exception;
  */
 class MyFatoorahPayment extends MyFatoorah
 {
+    //-----------------------------------------------------------------------------------------------------------------------------------------
 
     /**
      * The file name used in caching the gateways data
@@ -88,8 +89,9 @@ class MyFatoorahPayment extends MyFatoorah
             $cachedGateways = $this->addGatewayToCheckout($gateway, $cachedGateways, $isApRegistered);
         }
 
+        //add only one ap/gp gateway
+        $cachedGateways['gp'] = $cachedGateways['gp'][0] ?? [];
         if ($isApRegistered) {
-            //add only one ap gateway
             $cachedGateways['ap'] = $cachedGateways['ap'][0] ?? [];
         }
 
@@ -109,30 +111,24 @@ class MyFatoorahPayment extends MyFatoorah
      */
     protected function addGatewayToCheckout($gateway, $checkoutGateways, $isApRegistered)
     {
+        $code = $gateway->PaymentMethodCode;
+        if ($gateway->IsEmbeddedSupported) {
+            $map = [
+                'stc' => 'cards',
+                'gp'  => 'gp',
+                'ap'  => ($isApRegistered) ? 'ap' : 'cards'
+            ];
 
-        if ($gateway->PaymentMethodCode == 'gp') {
-            $checkoutGateways['gp']    = $gateway;
-            $checkoutGateways['all'][] = $gateway;
-        } elseif ($gateway->PaymentMethodCode == 'ap') {
-            if ($isApRegistered) {
-                $checkoutGateways['ap'][] = $gateway;
-            } else {
-                $checkoutGateways['cards'][] = $gateway;
-            }
-            $checkoutGateways['all'][] = $gateway;
-        } elseif ($gateway->PaymentMethodCode == 'stc') {
-            $checkoutGateways['cards'][] = $gateway;
-            $checkoutGateways['all'][]   = $gateway;
+            $index = $map[$code] ?? 'form';
+        } elseif ($gateway->IsDirectPayment) {
+            //don't add the $gateway if $gateway->IsEmbeddedSupported = false and $gateway->IsDirectPayment = true
+            return $checkoutGateways;
         } else {
-            if ($gateway->IsEmbeddedSupported) {
-                $checkoutGateways['form'][] = $gateway;
-                $checkoutGateways['all'][]  = $gateway;
-            } elseif (!$gateway->IsDirectPayment) {
-                $checkoutGateways['cards'][] = $gateway;
-                $checkoutGateways['all'][]   = $gateway;
-            }
+            $index = 'cards';
         }
 
+        $checkoutGateways[$index][] = $gateway;
+        $checkoutGateways['all'][]  = $gateway;
         return $checkoutGateways;
     }
 
@@ -221,7 +217,6 @@ class MyFatoorahPayment extends MyFatoorah
      */
     public function sendPayment($curlData)
     {
-
         $this->preparePayment($curlData);
 
         $json = $this->callAPI("$this->apiURL/v2/SendPayment", $curlData, $curlData['CustomerReference'], 'Send Payment');
@@ -239,7 +234,6 @@ class MyFatoorahPayment extends MyFatoorah
      */
     public function executePayment($curlData)
     {
-
         $this->preparePayment($curlData);
 
         $json = $this->callAPI("$this->apiURL/v2/ExecutePayment", $curlData, $curlData['CustomerReference'], 'Execute Payment');
@@ -255,22 +249,49 @@ class MyFatoorahPayment extends MyFatoorah
      */
     private function preparePayment(&$curlData)
     {
-
-        $curlData['CustomerReference'] = $curlData['CustomerReference'] ?? null;
+        $curlData['CustomerReference'] = $curlData['CustomerReference'] ?? null; //important to be set even with null and here
         $curlData['SourceInfo']        = $curlData['SourceInfo'] ?? 'MyFatoorah PHP Library ' . $this->version;
 
+        $this->prepareInvoiceInfo($curlData);
+        $this->prepareCustomerInfo($curlData);
+    }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Prepare Customer Info for SendPayment and ExecutePayment
+     *
+     * @param array $curlData Invoice information
+     */
+    private function prepareCustomerInfo(&$curlData)
+    {
         if (!empty($curlData['CustomerName'])) {
             $curlData['CustomerName'] = preg_replace('/[^\p{L}\p{N}\s]/u', '', $curlData['CustomerName']);
         }
 
+        if (empty($curlData['CustomerEmail'])) {
+            $curlData['CustomerEmail'] = null;
+        }
+    }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Prepare Invoice Info for SendPayment and ExecutePayment
+     *
+     * @param array $curlData Invoice information
+     */
+    private function prepareInvoiceInfo(&$curlData)
+    {
         if (!empty($curlData['InvoiceItems'])) {
             foreach ($curlData['InvoiceItems'] as &$item) {
                 $item['ItemName'] = strip_tags($item['ItemName']);
             }
         }
+        unset($item); //important to clear the ref
 
-        if (empty($curlData['CustomerEmail'])) {
-            $curlData['CustomerEmail'] = null;
+        if (empty($curlData['ExpiryDate']) && !empty($curlData['ExpiryMinutes'])) {
+            $curlData['ExpiryDate'] = $this->getExpiryDate($curlData['ExpiryMinutes']);
         }
     }
 
@@ -289,7 +310,7 @@ class MyFatoorahPayment extends MyFatoorah
 
         $curlData = ['CustomerIdentifier' => $userDefinedField];
 
-        return $this->InitiateSession($curlData, $logId);
+        return $this->initiateSession($curlData, $logId);
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -302,7 +323,7 @@ class MyFatoorahPayment extends MyFatoorah
      *
      * @return object
      */
-    public function InitiateSession($curlData, $logId = null)
+    public function initiateSession($curlData, $logId = null)
     {
 
         $json = $this->callAPI("$this->apiURL/v2/InitiateSession", $curlData, $logId, 'Initiate Session');

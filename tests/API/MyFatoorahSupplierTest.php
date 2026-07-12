@@ -7,7 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class MyFatoorahSupplierTest extends TestCase
 {
-
     private $keys;
 
     //-----------------------------------------------------------------------------------------------------------------------------------------

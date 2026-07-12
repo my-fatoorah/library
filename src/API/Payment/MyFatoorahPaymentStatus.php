@@ -51,7 +51,7 @@ class MyFatoorahPaymentStatus extends MyFatoorahPayment
             $data = self::getSuccessData($data);
             $this->log("$msgLog - Status is Paid");
         } elseif ($data->InvoiceStatus != 'Paid') {
-            $data = self::getErrorData($data, $keyId, $KeyType);
+            $data = $this->getErrorData($data, $keyId, $KeyType);
             $this->log("$msgLog - Status is " . $data->InvoiceStatus . '. Error is ' . $data->InvoiceError);
         }
 
@@ -124,7 +124,7 @@ class MyFatoorahPaymentStatus extends MyFatoorahPayment
      *
      * @return object
      */
-    private static function getErrorData($data, $keyId, $KeyType)
+    private function getErrorData($data, $keyId, $KeyType)
     {
 
         //------------------
@@ -142,9 +142,11 @@ class MyFatoorahPaymentStatus extends MyFatoorahPayment
         //------------------
         //case 2: payment is Expired
         //all myfatoorah gateway is set to Asia/Kuwait
+        $timeZone = $this->getVendorTimeZone();
+
         $ExpiryDateTime = $data->ExpiryDate . ' ' . $data->ExpiryTime;
-        $ExpiryDate     = new \DateTime($ExpiryDateTime, new \DateTimeZone('Asia/Kuwait'));
-        $currentDate    = new \DateTime('now', new \DateTimeZone('Asia/Kuwait'));
+        $ExpiryDate     = new \DateTime($ExpiryDateTime, new \DateTimeZone($timeZone));
+        $currentDate    = new \DateTime('now', new \DateTimeZone($timeZone));
 
         if ($ExpiryDate < $currentDate) {
             $data->InvoiceStatus = 'Expired';

@@ -2,22 +2,13 @@
 
 namespace MyFatoorah\Test\API;
 
+use MyFatoorah\Test\MyFatoorahTestCase;
 use MyFatoorah\Library\API\MyFatoorahSupplier;
-use PHPUnit\Framework\TestCase;
 
-class MyFatoorahSupplierTest extends TestCase
+class MyFatoorahSupplierTest extends MyFatoorahTestCase
 {
-    private $keys;
-
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function __construct()
-    {
-        parent::__construct();
-        $this->keys = include __DIR__ . '/../apiKeys.php';
-    }
-
-    //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testGetSupplierDashboard()
+    public function testGetSupplierDashboard(): void
     {
         foreach ($this->keys as $config) {
             try {
@@ -33,7 +24,7 @@ class MyFatoorahSupplierTest extends TestCase
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testIsSupplierApproved()
+    public function testIsSupplierApproved(): void
     {
         foreach ($this->keys as $config) {
             try {
@@ -49,7 +40,7 @@ class MyFatoorahSupplierTest extends TestCase
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testIsSupplierApprovedNotCreated()
+    public function testIsSupplierApprovedNotCreated(): void
     {
         foreach ($this->keys as $config) {
             try {

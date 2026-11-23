@@ -5,13 +5,6 @@ namespace MyFatoorah\Library\API;
 use MyFatoorah\Library\MyFatoorah;
 use Exception;
 
-/**
- * MyFatoorahList handles the list process of MyFatoorah API endpoints
- *
- * @author    MyFatoorah <tech@myfatoorah.com>
- * @copyright MyFatoorah, All rights reserved
- * @license   GNU General Public License v3.0
- */
 class MyFatoorahList extends MyFatoorah
 {
     //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -22,16 +15,15 @@ class MyFatoorahList extends MyFatoorah
      * @param string $currency The currency that will be converted into the currency of MyFatoorah portal account.
      * @param array  $allRates An array of MyFatoorah currencies and rates
      *
-     * @return double
+     * @return float
      *
      * @throws Exception        Throw exception if the input currency is not support by MyFatoorah portal account.
      */
     public static function getOneCurrencyRate($currency, $allRates)
     {
-
         foreach ($allRates as $value) {
             if ($value->Text == $currency) {
-                return (double) $value->Value;
+                return (float) $value->Value;
             }
         }
         throw new Exception('The selected currency is not supported by MyFatoorah');
@@ -44,11 +36,10 @@ class MyFatoorahList extends MyFatoorah
      *
      * @param string $currency The currency that will be converted into the currency of MyFatoorah portal account.
      *
-     * @return double
+     * @return float
      */
     public function getCurrencyRate($currency)
     {
-
         $allRates = $this->getCurrencyRates();
         return self::getOneCurrencyRate($currency, $allRates);
     }
@@ -62,7 +53,6 @@ class MyFatoorahList extends MyFatoorah
      */
     public function getCurrencyRates()
     {
-
         $url = "$this->apiURL/v2/GetCurrenciesExchangeList";
         return (array) $this->callAPI($url, null, null, 'Get Currencies Exchange List');
     }

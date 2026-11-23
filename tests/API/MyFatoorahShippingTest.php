@@ -2,21 +2,13 @@
 
 namespace MyFatoorah\Test\API;
 
+use MyFatoorah\Test\MyFatoorahTestCase;
 use MyFatoorah\Library\API\MyFatoorahShipping;
 
-class MyFatoorahShippingTest extends \PHPUnit\Framework\TestCase
+class MyFatoorahShippingTest extends MyFatoorahTestCase
 {
-    private $keys;
-
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function __construct()
-    {
-        parent::__construct();
-        $this->keys = include __DIR__ . '/../apiKeys.php';
-    }
-
-    //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testGetShippingCountries()
+    public function testGetShippingCountries(): void
     {
         foreach ($this->keys as $config) {
             try {
@@ -32,11 +24,11 @@ class MyFatoorahShippingTest extends \PHPUnit\Framework\TestCase
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testGetShippingCities()
+    public function testGetShippingCities(): void
     {
         foreach ($this->keys as $config) {
             try {
-                $mfObj  = new MyfatoorahShipping($config);
+                $mfObj  = new MyFatoorahShipping($config);
                 $cities = $mfObj->getShippingCities(1, 'KW', 'ada');
 
                 $this->assertEquals('ADAN', $cities[0]);
@@ -48,9 +40,9 @@ class MyFatoorahShippingTest extends \PHPUnit\Framework\TestCase
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testCalculateShippingCharge()
+    public function testCalculateShippingCharge(): void
     {
-        $mfObj = new MyfatoorahShipping($this->keys['valid']);
+        $mfObj = new MyFatoorahShipping($this->keys['valid']);
 
         $shippingData = [
             'ShippingMethod' => 1,
@@ -76,23 +68,24 @@ class MyFatoorahShippingTest extends \PHPUnit\Framework\TestCase
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testCalculateShippingChargeExceptionEmptyProductName()
+    public function testCalculateShippingChargeExceptionEmptyProductName(): void
     {
-        $mfObj = new MyfatoorahShipping($this->keys['valid']);
+        $mfObj = new MyFatoorahShipping($this->keys['valid']);
 
-        //test empty ProductName
+        // Test empty ProductName
         $shippingData = [
             'ShippingMethod' => 1,
             'Items'          => [[
-            'ProductName' => '',
-            'Description' => 'product',
-            'Weight'      => 10,
-            'Width'       => 10,
-            'Height'      => 10,
-            'Depth'       => 10,
-            'Quantity'    => 1,
-            'UnitPrice'   => '17.234',
-                ]],
+                'ProductName' => '',
+                'Description' => 'product',
+                'Weight'      => 10,
+                'Width'       => 10,
+                'Height'      => 10,
+                'Depth'       => 10,
+                'Quantity'    => 1,
+                'UnitPrice'   => '17.234',
+            ]
+            ],
             'CountryCode'    => 'KW',
             'CityName'       => 'adan',
             'PostalCode'     => '12345',

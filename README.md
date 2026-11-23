@@ -1,5 +1,5 @@
 [![Latest Stable Version](https://poser.pugx.org/myfatoorah/library/v)](https://dev.azure.com/myfatoorahsc/Public-Repo/_git/Library/tags)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://scrutinizer-ci.com/g/my-fatoorah/library/badges/build.png?b=main)](https://scrutinizer-ci.com/g/my-fatoorah/library/build-status/main)
 [![Code Intelligence Status](https://scrutinizer-ci.com/g/my-fatoorah/library/badges/code-intelligence.svg?b=main)](https://scrutinizer-ci.com/code-intelligence)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/my-fatoorah/library/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/my-fatoorah/library/?branch=main)
@@ -81,4 +81,7 @@ phpunit
 
 ## License
 
-The GPL-3.0-only License.
+The [MIT License](https://opensource.org/licenses/MIT). Take the library, change it, ship it
+inside your own product - just keep the MyFatoorah copyright notice, and it stays clear that
+this is the official MyFatoorah PHP library and who wrote it. The notice is at the top of
+`autoload.php` and on the main MyFatoorah class; keeping either one is enough.

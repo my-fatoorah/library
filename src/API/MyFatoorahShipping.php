@@ -4,13 +4,6 @@ namespace MyFatoorah\Library\API;
 
 use MyFatoorah\Library\MyFatoorah;
 
-/**
- * MyFatoorahShipping handles the shipping process of MyFatoorah API endpoints
- *
- * @author    MyFatoorah <tech@myfatoorah.com>
- * @copyright MyFatoorah, All rights reserved
- * @license   GNU General Public License v3.0
- */
 class MyFatoorahShipping extends MyFatoorah
 {
     //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -41,9 +34,9 @@ class MyFatoorahShipping extends MyFatoorah
     public function getShippingCities($method, $countryCode, $searchValue = '')
     {
         $url = $this->apiURL . '/v2/GetCities'
-                . '?shippingMethod=' . $method
-                . '&countryCode=' . $countryCode
-                . '&searchValue=' . urlencode(substr($searchValue, 0, 30));
+            . '?shippingMethod=' . $method
+            . '&countryCode=' . $countryCode
+            . '&searchValue=' . urlencode(substr($searchValue, 0, 30));
 
         $json = $this->callAPI($url, null, null, "Get Cities: $countryCode");
         return array_map('ucwords', $json->Data->CityNames);

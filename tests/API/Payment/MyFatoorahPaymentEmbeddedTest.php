@@ -1,23 +1,14 @@
 <?php
 
-namespace MyFatoorah\Test\API;
+namespace MyFatoorah\Test\API\Payment;
 
+use MyFatoorah\Test\MyFatoorahTestCase;
 use MyFatoorah\Library\API\Payment\MyFatoorahPaymentEmbedded;
-use PHPUnit\Framework\TestCase;
 
-class MyFatoorahPaymentEmbeddedTest extends TestCase
+class MyFatoorahPaymentEmbeddedTest extends MyFatoorahTestCase
 {
-    private $keys;
-
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function __construct()
-    {
-        parent::__construct();
-        $this->keys = include __DIR__ . '/../../apiKeys.php';
-    }
-
-    //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testGetCheckoutGateways()
+    public function testGetCheckoutGateways(): void
     {
         foreach ($this->keys as $config) {
             try {

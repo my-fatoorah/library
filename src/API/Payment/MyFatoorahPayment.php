@@ -5,17 +5,9 @@ namespace MyFatoorah\Library\API\Payment;
 use MyFatoorah\Library\MyFatoorah;
 use Exception;
 
-/**
- *  MyFatoorahPayment handles the payment process of MyFatoorah API endpoints
- *
- * @author    MyFatoorah <tech@myfatoorah.com>
- * @copyright MyFatoorah, All rights reserved
- * @license   GNU General Public License v3.0
- */
 class MyFatoorahPayment extends MyFatoorah
 {
     //-----------------------------------------------------------------------------------------------------------------------------------------
-
     /**
      * The file name used in caching the gateways data
      *
@@ -28,15 +20,14 @@ class MyFatoorahPayment extends MyFatoorah
     /**
      * List available Payment Methods (POST API)
      *
-     * @param double|int $invoiceAmount The display invoice total amount.
-     * @param string     $currencyIso   The display invoice currency ISO.
-     * @param boolean    $isCached      It used to cache the gateways.
+     * @param float|int $invoiceAmount The display invoice total amount.
+     * @param string    $currencyIso   The display invoice currency ISO.
+     * @param bool      $isCached      It used to cache the gateways.
      *
      * @return array
      */
     public function initiatePayment($invoiceAmount = 0, $currencyIso = '', $isCached = false)
     {
-
         $postFields = [
             'InvoiceAmount' => $invoiceAmount,
             'CurrencyIso'   => $currencyIso,
@@ -61,7 +52,6 @@ class MyFatoorahPayment extends MyFatoorah
      */
     public function getCachedVendorGateways()
     {
-
         if (file_exists(self::$pmCachedFile)) {
             $cache = file_get_contents(self::$pmCachedFile);
             return ($cache) ? json_decode($cache) : [];
@@ -81,7 +71,6 @@ class MyFatoorahPayment extends MyFatoorah
      */
     public function getCachedCheckoutGateways($isApRegistered = false)
     {
-
         $gateways = $this->getCachedVendorGateways();
 
         $cachedGateways = ['all' => [], 'cards' => [], 'form' => [], 'ap' => [], 'gp' => []];
@@ -89,7 +78,7 @@ class MyFatoorahPayment extends MyFatoorah
             $cachedGateways = $this->addGatewayToCheckout($gateway, $cachedGateways, $isApRegistered);
         }
 
-        //add only one ap/gp gateway
+        // Add only one ap/gp gateway
         $cachedGateways['gp'] = $cachedGateways['gp'][0] ?? [];
         if ($isApRegistered) {
             $cachedGateways['ap'] = $cachedGateways['ap'][0] ?? [];
@@ -103,9 +92,9 @@ class MyFatoorahPayment extends MyFatoorah
     /**
      * Add the MyFatoorah gateway object to the a given Payment Methods Array
      *
-     * @param object  $gateway          MyFatoorah gateway object.
-     * @param array   $checkoutGateways Payment Methods Array.
-     * @param boolean $isApRegistered   Is site domain is registered with applePay and MyFatoorah or not.
+     * @param object $gateway          MyFatoorah gateway object.
+     * @param array  $checkoutGateways Payment Methods Array.
+     * @param bool   $isApRegistered   Is site domain is registered with applePay and MyFatoorah or not.
      *
      * @return array
      */
@@ -121,7 +110,7 @@ class MyFatoorahPayment extends MyFatoorah
 
             $index = $map[$code] ?? 'form';
         } elseif ($gateway->IsDirectPayment) {
-            //don't add the $gateway if $gateway->IsEmbeddedSupported = false and $gateway->IsDirectPayment = true
+            // Don't add the $gateway if $gateway->IsEmbeddedSupported = false and $gateway->IsDirectPayment = true
             return $checkoutGateways;
         } else {
             $index = 'cards';
@@ -137,10 +126,10 @@ class MyFatoorahPayment extends MyFatoorah
     /**
      * Get Payment Method Object
      *
-     * @param string     $gateway       MyFatoorah gateway object.
-     * @param string     $searchKey     The Search key ['PaymentMethodId', 'PaymentMethodCode'].
-     * @param double|int $invoiceAmount The display invoice total amount.
-     * @param string     $currencyIso   The display invoice currency ISO.
+     * @param string    $gateway       MyFatoorah gateway object.
+     * @param string    $searchKey     The Search key ['PaymentMethodId', 'PaymentMethodCode'].
+     * @param float|int $invoiceAmount The display invoice total amount.
+     * @param string    $currencyIso   The display invoice currency ISO.
      *
      * @return object
      *
@@ -148,7 +137,6 @@ class MyFatoorahPayment extends MyFatoorah
      */
     public function getOnePaymentMethod($gateway, $searchKey = 'PaymentMethodId', $invoiceAmount = 0, $currencyIso = '')
     {
-
         $paymentMethods = $this->initiatePayment($invoiceAmount, $currencyIso);
 
         $paymentMethod = null;
@@ -181,7 +169,6 @@ class MyFatoorahPayment extends MyFatoorah
      */
     public function getInvoiceURL($curlData, $gatewayId = 0, $orderId = null, $sessionId = null, $ntfOption = 'Lnk')
     {
-
         $this->log('------------------------------------------------------------');
 
         $curlData['CustomerReference'] = $curlData['CustomerReference'] ?? $orderId;
@@ -246,10 +233,12 @@ class MyFatoorahPayment extends MyFatoorah
      * Prepare payment array for SendPayment and ExecutePayment
      *
      * @param array $curlData Invoice information
+     *
+     * @return void
      */
     private function preparePayment(&$curlData)
     {
-        $curlData['CustomerReference'] = $curlData['CustomerReference'] ?? null; //important to be set even with null and here
+        $curlData['CustomerReference'] = $curlData['CustomerReference'] ?? null; // Important: to be set even with null and here
         $curlData['SourceInfo']        = $curlData['SourceInfo'] ?? 'MyFatoorah PHP Library ' . $this->version;
 
         $this->prepareInvoiceInfo($curlData);
@@ -262,6 +251,8 @@ class MyFatoorahPayment extends MyFatoorah
      * Prepare Customer Info for SendPayment and ExecutePayment
      *
      * @param array $curlData Invoice information
+     *
+     * @return void
      */
     private function prepareCustomerInfo(&$curlData)
     {
@@ -280,6 +271,8 @@ class MyFatoorahPayment extends MyFatoorah
      * Prepare Invoice Info for SendPayment and ExecutePayment
      *
      * @param array $curlData Invoice information
+     *
+     * @return void
      */
     private function prepareInvoiceInfo(&$curlData)
     {
@@ -288,7 +281,7 @@ class MyFatoorahPayment extends MyFatoorah
                 $item['ItemName'] = strip_tags($item['ItemName']);
             }
         }
-        unset($item); //important to clear the ref
+        unset($item); // Important: to clear the ref
 
         if (empty($curlData['ExpiryDate']) && !empty($curlData['ExpiryMinutes'])) {
             $curlData['ExpiryDate'] = $this->getExpiryDate($curlData['ExpiryMinutes']);
@@ -307,7 +300,6 @@ class MyFatoorahPayment extends MyFatoorah
      */
     public function getEmbeddedSession($userDefinedField = '', $logId = null)
     {
-
         $curlData = ['CustomerIdentifier' => $userDefinedField];
 
         return $this->initiateSession($curlData, $logId);
@@ -325,7 +317,6 @@ class MyFatoorahPayment extends MyFatoorah
      */
     public function initiateSession($curlData, $logId = null)
     {
-
         $json = $this->callAPI("$this->apiURL/v2/InitiateSession", $curlData, $logId, 'Initiate Session');
         return $json->Data;
     }
@@ -341,7 +332,6 @@ class MyFatoorahPayment extends MyFatoorah
      */
     public function registerApplePayDomain($url)
     {
-
         $domainName = ['DomainName' => parse_url($url, PHP_URL_HOST)];
         return $this->callAPI("$this->apiURL/v2/RegisterApplePayDomain", $domainName, '', 'Register Apple Pay Domain');
     }

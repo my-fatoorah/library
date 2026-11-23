@@ -4,17 +4,9 @@ namespace MyFatoorah\Library\API\Payment;
 
 use MyFatoorah\Library\API\MyFatoorahList;
 
-/**
- *  MyFatoorahPaymentForm handles the form process of MyFatoorah API endpoints
- *
- * @author    MyFatoorah <tech@myfatoorah.com>
- * @copyright MyFatoorah, All rights reserved
- * @license   GNU General Public License v3.0
- */
 class MyFatoorahPaymentEmbedded extends MyFatoorahPayment
 {
     //-----------------------------------------------------------------------------------------------------------------------------------------
-
     /**
      * The checkoutGateways array is used to display the payment in the checkout page.
      *
@@ -27,15 +19,14 @@ class MyFatoorahPaymentEmbedded extends MyFatoorahPayment
     /**
      * List available Payment Methods
      *
-     * @param double|int $invoiceAmount  The display invoice total amount.
-     * @param string     $currencyIso    The display invoice currency ISO.
-     * @param bool       $isApRegistered Is site domain is registered with ApplePay and MyFatoorah or not.
+     * @param float|int $invoiceAmount  The display invoice total amount.
+     * @param string    $currencyIso    The display invoice currency ISO.
+     * @param bool      $isApRegistered Is site domain is registered with ApplePay and MyFatoorah or not.
      *
      * @return array
      */
     public function getCheckoutGateways($invoiceAmount, $currencyIso, $isApRegistered)
     {
-
         if (!empty(self::$checkoutGateways)) {
             return self::$checkoutGateways;
         }
@@ -59,7 +50,7 @@ class MyFatoorahPaymentEmbedded extends MyFatoorahPayment
             self::$checkoutGateways = $this->addGatewayToCheckout($gateway, self::$checkoutGateways, $isApRegistered);
         }
 
-        //add only one ap/gp gateway
+        // Add only one ap/gp gateway
         self::$checkoutGateways['gp'] = $this->getOneEmbeddedGateway(self::$checkoutGateways['gp'], $currencyIso, $allRates);
         if ($isApRegistered) {
             self::$checkoutGateways['ap'] = $this->getOneEmbeddedGateway(self::$checkoutGateways['ap'], $currencyIso, $allRates);
@@ -75,23 +66,22 @@ class MyFatoorahPaymentEmbedded extends MyFatoorahPayment
      *
      * @param object $paymentMethod The payment method object obtained from the initiate payment endpoint
      * @param array  $allRates      The MyFatoorah currency rate array of all gateways.
-     * @param double $currencyRate  The currency rate of the invoice.
+     * @param float  $currencyRate  The currency rate of the invoice.
      *
-     * @return double
+     * @return float
      */
     private function getPaymentTotalAmount($paymentMethod, $allRates, $currencyRate)
     {
-
         $dbTrucVal = ((int) ($paymentMethod->TotalAmount * 1000)) / 1000;
         if ($paymentMethod->PaymentCurrencyIso == $paymentMethod->CurrencyIso) {
             return $this->roundUp($dbTrucVal, 2);
         }
 
-        //convert to portal base currency
+        // Convert to portal base currency
         $dueVal          = ($currencyRate == 1) ? $dbTrucVal : round($paymentMethod->TotalAmount / $currencyRate, 3);
         $baseTotalAmount = $this->roundUp($dueVal, 2);
 
-        //gateway currency is not the portal currency
+        // Gateway currency is not the portal currency
         $paymentCurrencyRate = MyFatoorahList::getOneCurrencyRate($paymentMethod->PaymentCurrencyIso, $allRates);
         if ($paymentCurrencyRate != 1) {
             $paymentTotalAmount = $baseTotalAmount * $paymentCurrencyRate;
@@ -106,8 +96,8 @@ class MyFatoorahPaymentEmbedded extends MyFatoorahPayment
     /**
      * Returns the next highest float value by rounding up to a certain decimal
      *
-     * @param mixed $number
-     * @param mixed $decimalPlaces
+     * @param mixed $number        the value that will be rounded up
+     * @param mixed $decimalPlaces the number of decimals to keep
      *
      * @return float
      */
@@ -140,7 +130,7 @@ class MyFatoorahPaymentEmbedded extends MyFatoorahPayment
             return $gateways[$displayCurrencyIndex];
         }
 
-        //get defult mf account currency
+        // Get default mf account currency
         $defCurKey       = array_search('1', array_column($allRates, 'Value'));
         $defaultCurrency = $allRates[$defCurKey]->Text;
 
@@ -167,7 +157,6 @@ class MyFatoorahPaymentEmbedded extends MyFatoorahPayment
      */
     public static function getTranslatedCurrency($currency)
     {
-
         $currencies = [
             'KWD' => ['en' => 'KD', 'ar' => 'د.ك'],
             'SAR' => ['en' => 'SR', 'ar' => 'ريال'],

@@ -1,30 +1,50 @@
 {
     "name": "myfatoorah/library",
     "description": "MyFatoorah PHP Library",
-    "version": "2.2.10",
+    "version": "2.2.11",
     "type": "library",
-    "license": [
-        "GPL-3.0-only"
-    ],
+    "license": "MIT",
     "require": {
         "php": ">=7",
         "ext-curl": "*",
         "ext-json": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5",
-        "phpcompatibility/php-compatibility": "*",
-        "squizlabs/php_codesniffer": "*",
-        "phpstan/phpstan": "^1.10",
-        "phan/phan": "^5.4"
+        "phpunit/phpunit": "^13.0",
+        "phpcompatibility/php-compatibility": "^10.0@alpha",
+        "squizlabs/php_codesniffer": "^4.0",
+        "phpstan/phpstan": "^2.0",
+        "phan/phan": "^6.0"
     },
     "prefer-stable": true,
     "scripts": {
-        "post-install-cmd": "\"vendor/bin/phpcs\" --config-set installed_paths vendor/phpcompatibility/php-compatibility",
-        "post-update-cmd": "\"vendor/bin/phpcs\" --config-set installed_paths vendor/phpcompatibility/php-compatibility"
+        "phpunit": "phpunit",
+        "phan": "phan",
+        "phpstan": [
+            "phpstan analyse autoload.php --level 9",
+            "phpstan analyse src/ --level 5",
+            "phpstan analyse tests/ --level 5"
+        ],
+        "phpcs": [
+            "phpcs",
+            "phpcs -p --standard=PHPCompatibility autoload.php --runtime-set testVersion 7.0-",
+            "phpcs -p --standard=PHPCompatibility src/ --runtime-set testVersion 7.0-",
+            "phpcs -p --standard=PHPCompatibility tests/ --runtime-set testVersion 8.4-"
+        ],
+        "psr4": "@composer dump-autoload --optimize --strict-psr --dry-run",
+        "phpcbf": "phpcbf",
+        "check": [
+            "@phpunit",
+            "@phan",
+            "@phpstan",
+            "@phpcs",
+            "@psr4"
+        ]
     },
     "autoload": {
-        "files": ["autoload.php"],
+        "files": [
+            "autoload.php"
+        ],
         "psr-4": {
             "MyFatoorah\\Library\\": "src/"
         }
@@ -49,7 +69,7 @@
     "authors": [
         {
             "name": "MyFatoorah Plugin Team",
-            "email": "plugins@myfatoorah.com"
+            "email": "tech@myfatoorah.com"
         },
         {
             "name": "Nermeen Shoman",
@@ -61,5 +81,10 @@
             "email": "rsaeed@myfatoorah.com",
             "role": "Senior Software Engineer"
         }
-    ]
+    ],
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
 }

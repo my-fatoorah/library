@@ -2,22 +2,13 @@
 
 namespace MyFatoorah\Test\V3;
 
+use MyFatoorah\Test\MyFatoorahTestCase;
 use MyFatoorah\Library\V3\MyFatoorahPayments;
-use PHPUnit\Framework\TestCase;
 
-class MyFatoorahPaymentsTest extends TestCase
+class MyFatoorahPaymentsTest extends MyFatoorahTestCase
 {
-    private $keys;
-
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function __construct()
-    {
-        parent::__construct();
-        $this->keys = include __DIR__ . '/../apiKeys.php';
-    }
-
-    //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testCreatePayment()
+    public function testCreatePayment(): void
     {
         $curlData = [
             'SessionId' => 'test-session-id-001',
@@ -33,8 +24,8 @@ class MyFatoorahPaymentsTest extends TestCase
                 $mfObj = new MyFatoorahPayments($config);
                 $data  = $mfObj->createPayment($curlData);
 
-                $this->assertIsObject($data);
                 $this->assertObjectHasProperty('PaymentURL', $data);
+                $this->assertStringStartsWith('https://', $data->PaymentURL);
             } catch (\Exception $ex) {
                 $this->assertEquals($config['exception'], $ex->getMessage(), $config['message']);
             }
@@ -42,7 +33,7 @@ class MyFatoorahPaymentsTest extends TestCase
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testGetPaymentDetails()
+    public function testGetPaymentDetails(): void
     {
         $paymentId = '07076945628364902373';
 
@@ -50,7 +41,6 @@ class MyFatoorahPaymentsTest extends TestCase
             try {
                 $mfObj = new MyFatoorahPayments($config);
                 $data  = $mfObj->getPaymentDetails($paymentId);
-                $this->assertIsObject($data);
                 $this->assertObjectHasProperty('Invoice', $data);
 
                 $this->assertEquals('PAID', $data->Invoice->Status);

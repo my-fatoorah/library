@@ -1,0 +1,11 @@
+# Keeps development files out of the archive Composer downloads, while leaving
+# them in the repository for anyone who clones it. A merchant installing the
+# library gets the code; the test suite, its API keys and the QA config stay
+# here. Run `git archive HEAD | tar -t` to see what a release carries.
+
+/.gitattributes export-ignore
+/.gitignore     export-ignore
+/phpcs.xml      export-ignore
+/.phan          export-ignore
+/phpunit.xml    export-ignore
+/tests          export-ignore

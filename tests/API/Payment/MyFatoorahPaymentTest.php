@@ -2,21 +2,13 @@
 
 namespace MyFatoorah\Test\API\Payment;
 
+use MyFatoorah\Test\MyFatoorahTestCase;
 use MyFatoorah\Library\API\Payment\MyFatoorahPayment;
 
-class MyFatoorahPaymentTest extends \PHPUnit\Framework\TestCase
+class MyFatoorahPaymentTest extends MyFatoorahTestCase
 {
-    private $keys;
-
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function __construct()
-    {
-        parent::__construct();
-        $this->keys = include __DIR__ . '/../../apiKeys.php';
-    }
-
-    //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testInitiatePayment()
+    public function testInitiatePayment(): void
     {
         foreach ($this->keys as $config) {
             try {
@@ -31,7 +23,7 @@ class MyFatoorahPaymentTest extends \PHPUnit\Framework\TestCase
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testSendPayment()
+    public function testSendPayment(): void
     {
         foreach ($this->keys as $config) {
             try {
@@ -51,14 +43,15 @@ class MyFatoorahPaymentTest extends \PHPUnit\Framework\TestCase
                     'ShippingConsignee'  => '',
                     'ShippingMethod'     => null,
                     'InvoiceItems'       => [[
-                    "ItemName"  => "<span>string</span>",
-                    "Quantity"  => 1,
-                    "UnitPrice" => 729,
-                    "Weight"    => 0,
-                    "Width"     => 0,
-                    "Height"    => 0,
-                    "Depth"     => 0
-                        ]],
+                        'ItemName'  => '<span>string</span>',
+                        'Quantity'  => 1,
+                        'UnitPrice' => 729,
+                        'Weight'    => 0,
+                        'Width'     => 0,
+                        'Height'    => 0,
+                        'Depth'     => 0
+                    ]
+                    ],
                     'NotificationOption' => 'LNK'
                 ];
 
@@ -70,20 +63,5 @@ class MyFatoorahPaymentTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    //-----------------------------------------------------------------------------------------------------------------------------------------
-
-    /**
-     * change the accessibility of a function
-     * usage $method->invokeArgs($mfObj, [$ua]);
-     *
-     * @param  type $name
-     * @return type
-     */
-    //    protected static function getMethod($name) {
-    //        $class  = new \ReflectionClass('\MyFatoorah\Library\MyfatoorahPayment');
-    //        $method = $class->getMethod($name);
-    //        $method->setAccessible(true);
-    //        return $method;
-    //    }
     //-----------------------------------------------------------------------------------------------------------------------------------------
 }

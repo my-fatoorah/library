@@ -4,12 +4,20 @@ namespace MyFatoorah\Library;
 
 use Exception;
 
-/**
- *  MyFatoorahWebhook handles Webhook endpoints.
- */
 class MyFatoorahWebhook extends MyFatoorah
 {
     //-----------------------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Validates an incoming MyFatoorah webhook request and returns its payload
+     *
+     * @param string        $secretKey the webhook secret key taken from the MyFatoorah portal
+     * @param string|object $logger    log file path, or a logger object
+     *
+     * @return array<mixed>
+     *
+     * @throws Exception if the store is not configured, the body is empty, or the signature is invalid
+     */
     public static function processWebhookRequest($secretKey, $logger = __DIR__ . '/myfatoorah_webhook.log'/* , $request = null */)
     {
         MyFatoorah::$loggerObj = $logger;
@@ -23,13 +31,12 @@ class MyFatoorahWebhook extends MyFatoorah
 
         list($mfVersion, $signature) = self::getMfHeaders();
 
-        //        if (!$request) {
+        //if (!$request) {
         $body = file_get_contents('php://input');
         MyFatoorah::log('MyFatoorah WebHook Body: ' . $body);
 
         $request = json_decode($body, true);
-        //        }
-
+        //}
         if (empty($request['Data'])) {
             $msg = 'Wrong data.';
             MyFatoorah::log($msg);
@@ -74,18 +81,18 @@ class MyFatoorahWebhook extends MyFatoorah
     /**
      * Checks whether the provided signature is correct or not for MyFatoorah Webhook version 1
      *
-     * @param array<mixed> $request
-     * @param string       $secretKey
-     * @param string       $signature
+     * @param array<mixed> $request   the decoded webhook request body
+     * @param string       $secretKey Webhook secret key
+     * @param string       $signature MyFatoorah signature
      *
-     * @return boolean
+     * @return bool
      *
      * @throws Exception if something wrong in the request
      */
     protected static function checkSignatureValidationV1($request, $secretKey, $signature)
     {
         if (!isset($request['EventType']) || !isset($request['Event'])) {
-            throw new Exception('Worng event.');
+            throw new Exception('Wrong event.');
         }
 
         return MyFatoorah::isSignatureValid($request['Data'], $secretKey, $signature, $request['EventType']);
@@ -96,18 +103,18 @@ class MyFatoorahWebhook extends MyFatoorah
     /**
      * Checks whether the provided signature is correct or not for MyFatoorah Webhook version 2
      *
-     * @param array<mixed, mixed> $request
-     * @param string              $secretKey
-     * @param string              $signature
+     * @param array<mixed, mixed> $request   the decoded webhook request body
+     * @param string              $secretKey Webhook secret key
+     * @param string              $signature MyFatoorah signature
      *
-     * @return boolean
+     * @return bool
      *
      * @throws Exception if something wrong in the request
      */
     protected static function checkSignatureValidationV2($request, $secretKey, $signature)
     {
         if (!isset($request['Event']['Code']) || !isset($request['Event']['Name'])) {
-            throw new Exception('Worng event.');
+            throw new Exception('Wrong event.');
         }
 
         $dataModel = self::getV2DataModel($request['Event']['Code'], $request['Data']);
@@ -175,7 +182,7 @@ class MyFatoorahWebhook extends MyFatoorah
         ];
 
         if (!isset($dataModels[$code])) {
-            throw new Exception('Worng event.');
+            throw new Exception('Wrong event.');
         }
 
         return $dataModels[$code]();
@@ -183,22 +190,29 @@ class MyFatoorahWebhook extends MyFatoorah
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Tells whether a Webhook version 2 message still needs to be processed for an order
+     *
+     * @param array<mixed> $webhook the webhook data model
+     * @param array<mixed> $order   the order record stored on the store side
+     *
+     * @return string|bool the reason to skip the message, or false when it should be processed
+     */
     public static function checkforWebHook2ProcessMessage($webhook, $order)
     {
-        //        if (strpos($order['myfatoorah_orderPM'], 'myfatoorah') === false) {
-        //            return('Wrong Payment Method.');
-        //        }
-
+        //if (strpos($order['myfatoorah_orderPM'], 'myfatoorah') === false) {
+        //  return('Wrong Payment Method.');
+        //}
         if ($order['myfatoorah_invoiceId'] != $webhook['Invoice']['Id']) {
             return('Wrong invoice.');
         }
 
-        //don't process because the Paid is a final status
+        // Don't process because the Paid is a final status
         if ($order['myfatoorah_status'] == 'Paid') {
             return('Order already Paid');
         }
 
-        //don't process for the same payment id and the status is not SUCCESS
+        // Don't process for the same payment id and the status is not SUCCESS
         if ($order['myfatoorah_paymentId'] == $webhook['Transaction']['PaymentId']) {
             return "Transaction already {$webhook['Transaction']['Status']}.";
         }
@@ -207,6 +221,14 @@ class MyFatoorahWebhook extends MyFatoorah
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Maps a webhook transaction status onto the matching MyFatoorah invoice status
+     *
+     * @param string $status the transaction status sent by the webhook
+     *
+     * @return string|null the invoice status, or null for an unknown transaction status
+     */
     public static function mapWebhook2Status($status)
     {
         $statuses = [

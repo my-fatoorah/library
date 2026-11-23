@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<ruleset name="MyFatoorah">
+    <description>
+        Every style and documentation rule this library is held to, in one
+        place, so `phpcs` with no arguments covers all of it.
+
+        PHPCompatibility is deliberately not here. It needs a testVersion,
+        which is a global setting in a ruleset, while src/ is checked against
+        7.0 and tests/ against 8.4. Rather than put one of them here and the
+        other on the command line, both stay on the command line where the
+        version each path is held to is visible.
+    </description>
+
+    <file>autoload.php</file>
+    <file>src</file>
+    <file>tests</file>
+
+    <!-- ===== 1. Layout: PSR-12 ===== -->
+    <rule ref="PSR12"/>
+
+    <!-- This codebase does not wrap lines. -->
+    <rule ref="Generic.Files.LineLength">
+        <severity>0</severity>
+    </rule>
+
+    <!--
+        PSR-12 says nothing about a blank line after a function's opening brace,
+        so the codebase had both habits. This settles it on "none", which is what
+        the majority already did, and keeps it settled for every function written
+        from here on. phpcbf fixes any that slip in.
+    -->
+    <rule ref="Squiz.WhiteSpace.FunctionOpeningBraceSpace"/>
+
+    <!--
+        autoload.php both declares mfPutFileContent() and runs the self-update
+        routine. That is deliberate: the function exists only for that routine,
+        and the file must not depend on the library it regenerates.
+    -->
+    <rule ref="PSR1.Files.SideEffects">
+        <exclude-pattern>*/autoload.php</exclude-pattern>
+    </rule>
+
+    <!-- ===== 2. Docblocks: PEAR, for what PSR-12 does not check ===== -->
+    <!--
+        Only src/ and autoload.php: the suites carry no docblocks by decision.
+    -->
+    <rule ref="PEAR.Commenting">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+
+        <!-- Header boilerplate; the library has its own header format. -->
+        <exclude name="PEAR.Commenting.FileComment.Missing"/>
+        <exclude name="PEAR.Commenting.FileComment.MissingCategoryTag"/>
+        <exclude name="PEAR.Commenting.FileComment.MissingPackageTag"/>
+        <exclude name="PEAR.Commenting.FileComment.MissingLinkTag"/>
+        <exclude name="PEAR.Commenting.FileComment.MissingVersion"/>
+        <exclude name="PEAR.Commenting.FileComment.IncompleteCopyright"/>
+        <exclude name="PEAR.Commenting.ClassComment.Missing"/>
+        <exclude name="PEAR.Commenting.ClassComment.MissingCategoryTag"/>
+        <exclude name="PEAR.Commenting.ClassComment.MissingPackageTag"/>
+        <exclude name="PEAR.Commenting.ClassComment.MissingAuthorTag"/>
+        <exclude name="PEAR.Commenting.ClassComment.MissingLicenseTag"/>
+        <exclude name="PEAR.Commenting.ClassComment.MissingLinkTag"/>
+        <exclude name="PEAR.Commenting.ClassComment.IncompleteCopyright"/>
+    </rule>
+
+    <rule ref="Generic.Commenting.DocComment">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+
+    <!-- ===== 3. Naming: camelCase for variables ===== -->
+    <!--
+        MemberNotCamelCaps is excluded because this sniff reports every read of
+        an API response property - $json->Data, ->InvoiceStatus - under that
+        code, and those are PascalCase because MyFatoorah sends them that way.
+        What is left is the library's own variables. Zend has the same sniff
+        but reports both under one code, which is why it is not used here.
+
+        src/ and autoload.php only: the suites name four webhook fixtures after
+        the MyFatoorah-Signature header, underscore and all.
+    -->
+    <rule ref="Squiz.NamingConventions.ValidVariableName">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+        <exclude name="Squiz.NamingConventions.ValidVariableName.MemberNotCamelCaps"/>
+    </rule>
+
+    <!--
+        Not included: Zend.NamingConventions.ValidVariableName. It was run once
+        as an audit and found three names worth fixing, but it reports
+        $json->Data and every other API response property under the same code
+        as a real variable, with no way to separate them. As a gate it would be
+        ~100 permanent false positives.
+    -->
+</ruleset>

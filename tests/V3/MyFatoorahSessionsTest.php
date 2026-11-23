@@ -2,22 +2,13 @@
 
 namespace MyFatoorah\Test\V3;
 
+use MyFatoorah\Test\MyFatoorahTestCase;
 use MyFatoorah\Library\V3\MyFatoorahSessions;
-use PHPUnit\Framework\TestCase;
 
-class MyFatoorahSessionsTest extends TestCase
+class MyFatoorahSessionsTest extends MyFatoorahTestCase
 {
-    private $keys;
-
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function __construct()
-    {
-        parent::__construct();
-        $this->keys = include __DIR__ . '/../apiKeys.php';
-    }
-
-    //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testCreateAndGetSessionDetails()
+    public function testCreateAndGetSessionDetails(): void
     {
         $curlData = [
             'Order' => [
@@ -31,13 +22,15 @@ class MyFatoorahSessionsTest extends TestCase
                 $mfObj = new MyFatoorahSessions($config);
                 $data  = $mfObj->createSession($curlData);
 
-                $this->assertIsObject($data);
                 $this->assertObjectHasProperty('SessionId', $data);
+                $this->assertNotEmpty($data->SessionId);
 
                 $details = $mfObj->getSessionDetails($data->SessionId);
 
-                $this->assertIsObject($details);
                 $this->assertObjectHasProperty('SessionExpiry', $details);
+
+                // A session that has already expired is not a session the vendor can use.
+                $this->assertGreaterThan(time(), strtotime($details->SessionExpiry));
             } catch (\Exception $ex) {
                 $this->assertEquals($config['exception'], $ex->getMessage(), $config['message']);
             }

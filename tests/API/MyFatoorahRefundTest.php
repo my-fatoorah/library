@@ -2,22 +2,13 @@
 
 namespace MyFatoorah\Test\API;
 
-use PHPUnit\Framework\TestCase;
+use MyFatoorah\Test\MyFatoorahTestCase;
 use MyFatoorah\Library\API\MyFatoorahRefund;
 
-class MyFatoorahRefundTest extends TestCase
+class MyFatoorahRefundTest extends MyFatoorahTestCase
 {
-    private $keys;
-
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function __construct()
-    {
-        parent::__construct();
-        $this->keys = include __DIR__ . '/../apiKeys.php';
-    }
-
-    //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testRefund()
+    public function testRefund(): void
     {
         try {
             $mfObj = new MyFatoorahRefund($this->keys['valid']);
@@ -30,16 +21,16 @@ class MyFatoorahRefundTest extends TestCase
             $this->assertContains(
                 $ex->getMessage(),
                 [
-                        $this->keys['valid']['refundException'],
-                        $this->keys['valid']['refundException2'],
-                    ],
+                    $this->keys['valid']['refundException'],
+                    $this->keys['valid']['refundException2'],
+                ],
                 $this->keys['valid']['message']
             );
         }
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    public function testMakeRefund()
+    public function testMakeRefund(): void
     {
         $postFields = [
             'Key'                     => 100202312116138082,

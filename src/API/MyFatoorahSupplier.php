@@ -4,13 +4,6 @@ namespace MyFatoorah\Library\API;
 
 use MyFatoorah\Library\MyFatoorah;
 
-/**
- * MyFatoorahSupplier handles the Supplier process of MyFatoorah API endpoints
- *
- * @author    MyFatoorah <tech@myfatoorah.com>
- * @copyright MyFatoorah, All rights reserved
- * @license   GNU General Public License v3.0
- */
 class MyFatoorahSupplier extends MyFatoorah
 {
     //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -25,7 +18,7 @@ class MyFatoorahSupplier extends MyFatoorah
     public function getSupplierDashboard($supplierCode)
     {
         $url = $this->apiURL . '/v2/GetSupplierDashboard?SupplierCode=' . $supplierCode;
-        return $this->callAPI($url, null, null, "Get Supplier Documents");
+        return $this->callAPI($url, null, null, 'Get Supplier Documents');
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -35,7 +28,7 @@ class MyFatoorahSupplier extends MyFatoorah
      *
      * @param int $supplierCode The supplier code that exists in MyFatoorah portal account.
      *
-     * @return boolean
+     * @return bool
      */
     public function isSupplierApproved($supplierCode)
     {
